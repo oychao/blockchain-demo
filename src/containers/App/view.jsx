@@ -1,19 +1,25 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
+import store from 'store';
 
-import './style.css';
+import 'containers/App/style.css';
+
+import Miner from 'business/miner';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            count: 1
+            miners: [
+                new Miner(1, 'Zhao', store.chain),
+                new Miner(2, 'Qian', store.chain)
+            ]
         };
         this.handleClick = this.handleClick.bind(this);
     }
     handleClick() {
-        this.setState({
-            count: this.state.count + 1
+        this.state.miners.forEach(miner => {
+            miner.listen('hello from App');
         });
     }
     render() {

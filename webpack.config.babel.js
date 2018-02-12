@@ -12,6 +12,10 @@ module.exports = {
         filename: 'bundle.js'
     },
     resolve: {
+        modules: [
+            path.resolve('./src'),
+            path.resolve('./node_modules')
+        ],
         extensions: ['.js', '.json', '.jsx', '.css']
     },
     module: {
@@ -22,6 +26,10 @@ module.exports = {
             test: /\.(js|jsx)$/,
             exclude: /node_modules/,
             use: ['babel-loader']
+        }, {
+            test: /\.(worker\.js)$/,
+            exclude: /node_modules/,
+            use: ['worker-loader']
         }]
     },
     devtool: 'inline-source-map',

@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-const difficulty = 4;
+const difficulty = 2;
 
 class Block {
     constructor(miner, data, prevBlock = {

@@ -1,25 +1,25 @@
 import React from 'react';
 import { hot } from 'react-hot-loader';
-import store from 'store';
 
 import 'containers/App/style.css';
 
-import Miner from 'business/miner';
+import Contactor from 'business/contactor';
+
+const contactor = new Contactor();
+let id = 0;
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            miners: [
-                new Miner(1, 'Zhao', store.chain),
-                new Miner(2, 'Qian', store.chain)
-            ]
+            count: 0
         };
         this.handleClick = this.handleClick.bind(this);
     }
     handleClick() {
-        this.state.miners.forEach(miner => {
-            miner.listen('hello from App');
+        contactor.create(++id);
+        this.setState({
+            count: contactor.miners.length
         });
     }
     render() {

@@ -17,7 +17,13 @@ class Chain {
 
     isValidBlock(block) {
         const prev = this.prevBlock;
-        return prev.hash === block.prevHash && prev.index === block.index - 1;
+        return block.validDiffculty() &&
+            prev.hash === block.prevHash &&
+            prev.index === block.index - 1;
+    }
+
+    lastBlock() {
+        return this.blocks[this.blocks.length - 1];
     }
 
     accept(block) {

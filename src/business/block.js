@@ -1,13 +1,13 @@
 import crypto from 'crypto';
 
-const difficulty = 2;
+const difficulty = 3;
 
 class Block {
-    constructor(miner, data, prevBlock = {
+    constructor(minerId, data, prevBlock = {
         index: -1,
         hash: 'Hello Block Chain'
     }) {
-        this.payload = { miner, data };
+        this.payload = { minerId, data };
         this.nonce = 0;
         this.prevBlock = prevBlock;
         this.calcHash();
@@ -20,7 +20,7 @@ class Block {
         this.timestamp = new Date().getTime();
         this.hash = crypto
             .createHash("sha256")
-            .update(this.index + this.prevHash + this.timestamp + this.miner + this.data + ++this.nonce)
+            .update(this.index + this.prevHash + this.timestamp + this.payload.minerId + this.payload.data + ++this.nonce)
             .digest("hex");
     }
 

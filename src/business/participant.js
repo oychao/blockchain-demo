@@ -1,5 +1,5 @@
 class Participant {
-    constructor(id, name, worker) {
+    constructor(id, worker) {
         if (Participant === this.constructor) {
             throw new Error('Cannot instantiate abstract class');
         }
@@ -7,7 +7,6 @@ class Participant {
             throw new Error('Worker not given');
         }
         this.id = id;
-        this.name = name;
         this.worker = worker;
     }
 

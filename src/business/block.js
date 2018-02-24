@@ -1,7 +1,5 @@
 import crypto from 'crypto';
 
-const difficulty = 3;
-
 class Block {
     constructor(minerId, data, prevBlock = {
         index: -1,
@@ -22,15 +20,6 @@ class Block {
             .createHash("sha256")
             .update(this.index + this.prevHash + this.timestamp + this.payload.minerId + this.payload.data + ++this.nonce)
             .digest("hex");
-    }
-
-    validDiffculty() {
-        for (let i = 0; i < difficulty; i++) {
-            if (this.hash.charAt(i) !== '0') {
-                return false;
-            }
-        }
-        return true;
     }
 }
 

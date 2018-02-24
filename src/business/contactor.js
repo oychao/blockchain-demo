@@ -11,19 +11,16 @@ class Contactor {
     }
 
     create(id) {
-        if(!id) {
+        if (!id) {
             console.log('id not given');
             return;
         }
-        const miner = new Miner(id, store.chain, block => {
-            console.log(block.index, block.payload.minerId, block.hash);
-            this.miners.forEach(m => {
-                if(m !== miner) {
-                    m.receive(block);
-                }
-            });
-        });
+        const miner = new Miner(id, store.chain)
         this.miners.push(miner);
+        this.miners.forEach(m => {
+            miner.acquaint(m);
+            m.acquaint(miner);
+        });
     }
 }
 

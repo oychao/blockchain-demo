@@ -12,9 +12,10 @@ const strategies = {
 
     start() {
         let block = new Block(state.id, Math.random(), state.chain.lastBlock());
-        setInterval(() => {
+        this.timer = setInterval(() => {
             if (state.chain.isValidBlock(block)) {
                 state.chain.accept(block);
+                console.log(state.chain.blocks.length);
                 this.broadcast(block);
                 block = new Block(state.id, Math.random(), state.chain.lastBlock());
             } else {
@@ -23,9 +24,39 @@ const strategies = {
         }, 1);
     },
 
+    stop() {
+        clearInterval(this.timer);
+    },
+
     receive(block) {
-        inherit(block, Block);
-        state.chain.accept(block);
+        try {
+            console.log(block.index, state.chain.lastBlock().index);
+            if (!state.chain.accept(block)) {
+                throw new Error(`${state.id} outdate chain`);
+            }
+        } catch (e) {
+            this.stop();
+            postMessage({
+                type: 'queryPeer'
+            });
+            throw e;
+        }
+    },
+
+    receiveBlocks(blocks) {
+        console.log(state.id, blocks.length);
+        state.chain.blocks = blocks;
+        this.start();
+    },
+
+    queryBlocks(minerId) {
+        postMessage({
+            type: 'getBlocks',
+            payload: {
+                minerId,
+                blocks: state.chain.blocks
+            }
+        });
     },
 
     broadcast(block) {

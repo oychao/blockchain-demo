@@ -1,14 +1,15 @@
 import Block from 'business/block';
 
+const difficulty = 2;
+
 class Chain {
     constructor(blocks) {
         if (blocks) {
             this.blocks = blocks;
-            this.prevBlock = blocks[blocks.length - 1];
         } else {
             this.blocks = [];
             const block = new Block('Genesis Block', 'hello_block_chain');
-            while (!block.validDiffculty()) {
+            while (!this.validDiffculty(block)) {
                 block.calcHash();
             }
             this.blocks.push(block);
@@ -16,23 +17,40 @@ class Chain {
     }
 
     isValidBlock(block) {
-        const prev = this.prevBlock;
-        return block.validDiffculty() &&
+        const prev = this.lastBlock();
+        return this.validDiffculty(block) &&
             prev.hash === block.prevHash &&
             prev.index === block.index - 1;
     }
 
     lastBlock() {
-        return this.blocks[this.blocks.length - 1];
+        return this.blocks[this.blocks.length - 1] || this.blocks[0];
     }
 
     accept(block) {
+        const prev = this.lastBlock();
         if (this.isValidBlock(block)) {
-            this.prevBlock = block;
-            this.blocks.push(this.prevBlock);
+            this.blocks.push(this.block);
+            return true;
+        } else if (prev.index > block.index - 1) {
+            return true;
+        } else if (prev.index < block.index - 1) {
+            return false;
         } else {
-            throw new Error('conflict block happend');
+            throw new Error('invalid block');
         }
+    }
+
+    validDiffculty(block) {
+        if (!block || !block.hash) {
+            return false;
+        }
+        for (let i = 0; i < difficulty; i++) {
+            if (block.hash.charAt(i) !== '0') {
+                return false;
+            }
+        }
+        return true;
     }
 
     print() {

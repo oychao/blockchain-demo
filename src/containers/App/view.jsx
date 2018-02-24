@@ -17,7 +17,7 @@ class App extends React.Component {
         this.handleClick = this.handleClick.bind(this);
     }
     handleClick() {
-        contactor.create(++id);
+        contactor.create(`miner-${++id}`);
         this.setState({
             count: contactor.miners.length
         });

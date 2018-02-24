@@ -2,7 +2,7 @@ import Participant from 'business/participant';
 import Worker from 'business/miner.worker';
 
 class Miner extends Participant {
-    constructor(id, chain, broadcast) {
+    constructor(id, chain) {
         super(id, new Worker());
         this.worker.postMessage({
             type: 'init',
@@ -11,16 +11,18 @@ class Miner extends Participant {
         this.worker.onmessage = e => {
             this[e.data.type](e.data.payload);
         };
-        this.broadcast = broadcast;
+        this.peers = [];
         this.worker.postMessage({
             type: 'start'
         });
+        this.refreshing = false;
+        this.queryTransactions = {};
     }
 
-    listen(msg) {
-        this.worker.postMessage({
-            type: 'listen',
-            payload: 'hello worker'
+    broadcast(block) {
+        console.log(block.index, block.payload.minerId, block.hash);
+        this.peers.forEach(m => {
+            m.receive(block);
         });
     }
 
@@ -29,6 +31,45 @@ class Miner extends Participant {
             type: 'receive',
             payload: block
         });
+    }
+
+    acquaint(miner) {
+        if (miner === this) {
+            return;
+        }
+        if (this.peers.indexOf(miner) === -1) {
+            this.peers.push(miner);
+        }
+    }
+
+    queryPeer() {
+        const randPeer = this.peers[Math.floor(Math.random() * this.peers.length)];
+        if (!randPeer) {
+            throw new Error('No valid miner');
+        }
+        randPeer.queryBlocks(this.id, blocks => {
+            this.worker.postMessage({
+                type: 'receiveBlocks',
+                payload: blocks
+            });
+        });
+    }
+
+    queryBlocks(minerId, callback) {
+        this.queryTransactions[minerId] = callback;
+        this.worker.postMessage({
+            type: 'queryBlocks',
+            payload: minerId
+        });
+    }
+
+    getBlocks({ minerId, blocks }) {
+        try {
+            this.queryTransactions[minerId].call(null, blocks);
+            delete this.queryTransactions[minerId];
+        } catch (e) {
+            throw e;
+        }
     }
 }
 

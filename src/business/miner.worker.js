@@ -43,7 +43,7 @@ class Digger {
         try {
             this.chain.accept(block);
             this.block.transactions = this.getTransactions();
-            this.block.nouce = 0;
+            this.block.nonce = 0;
         } catch (e) {
             this.stopMining();
             postMessage({

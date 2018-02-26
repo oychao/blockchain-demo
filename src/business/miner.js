@@ -15,7 +15,7 @@ class Miner extends Participant {
         };
         this.worker.postMessage({
             type: 'init',
-            payload: { id, chain }
+            payload: { chain, id: this.id }
         });
         this.worker.postMessage({
             type: 'startMining'

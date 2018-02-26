@@ -9,18 +9,6 @@ class Participant {
         this._id = id;
         this.worker = worker;
     }
-
-    listen() {
-        throw new Error('Abstract method');
-    }
-
-    announce() {
-        throw new Error('Abstract method');
-    }
-
-    sleep() {
-        throw new Error('Abstract method');
-    }
 }
 
 export default Participant;

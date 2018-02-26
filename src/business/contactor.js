@@ -1,5 +1,6 @@
 import store from 'store';
 import Miner from 'business/miner';
+import Pool from 'business/pool';
 
 if (!global.Worker) {
     throw new TypeError('Please update your browser to support Web Worker');
@@ -8,9 +9,10 @@ if (!global.Worker) {
 class Contactor {
     constructor() {
         this.miners = [];
+        this.pools = [];
     }
 
-    create(id) {
+    createMiner(id) {
         if (!id) {
             console.log('id not given');
             return;

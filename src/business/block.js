@@ -7,7 +7,7 @@ class Block {
         index: -1,
         hash: 'Hello Block Chain'
     }) {
-        this.minerId = minerId;
+        this.miner = minerId;
         this.transactions = transactions;
         this.nonce = 0;
         this.prevHash = prevBlock.hash;

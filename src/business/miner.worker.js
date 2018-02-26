@@ -15,7 +15,6 @@ const strategies = {
         this.timer = setInterval(() => {
             if (state.chain.isValidBlock(block)) {
                 state.chain.accept(block);
-                console.log(state.chain.blocks.length);
                 this.broadcast(block);
                 block = new Block(state.id, Math.random(), state.chain.lastBlock());
             } else {

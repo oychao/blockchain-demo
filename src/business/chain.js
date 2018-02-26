@@ -30,7 +30,7 @@ class Chain {
     accept(block) {
         const prev = this.lastBlock();
         if (this.isValidBlock(block)) {
-            this.blocks.push(this.block);
+            this.blocks.push(block);
             return true;
         } else if (prev.index > block.index - 1) {
             return true;

@@ -20,7 +20,8 @@ class Miner extends Participant {
     }
 
     broadcast(block) {
-        console.log(block.index, block.payload.minerId, block.hash);
+        console.log(block.index, block.payload.minerId, block.nonce,
+            block.prevHash.slice(0, 10), block.hash.slice(0, 10),);
         this.peers.forEach(m => {
             m.receive(block);
         });

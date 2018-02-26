@@ -2,7 +2,7 @@ import store from 'store';
 import Miner from 'business/miner';
 
 if (!global.Worker) {
-    throw new TypeError('Please update your browser to support web worker');
+    throw new TypeError('Please update your browser to support Web Worker');
 }
 
 class Contactor {

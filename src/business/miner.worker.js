@@ -11,14 +11,14 @@ const strategies = {
     },
 
     start() {
-        let block = new Block(state.id, Math.random(), state.chain.lastBlock());
+        this.block = new Block(state.id, Math.random(), state.chain.lastBlock());
         this.timer = setInterval(() => {
-            if (state.chain.isValidBlock(block)) {
-                state.chain.accept(block);
-                this.broadcast(block);
-                block = new Block(state.id, Math.random(), state.chain.lastBlock());
+            if (state.chain.isValidBlock(this.block)) {
+                state.chain.accept(this.block);
+                this.broadcast(this.block);
+                this.block = new Block(state.id, Math.random(), state.chain.lastBlock());
             } else {
-                block.calcHash(state.chain.lastBlock());
+                this.block.calcHash(state.chain.lastBlock());
             }
         }, 1);
     },
@@ -29,21 +29,18 @@ const strategies = {
 
     receive(block) {
         try {
-            console.log(block.index, state.chain.lastBlock().index);
-            if (!state.chain.accept(block)) {
-                throw new Error(`${state.id} outdate chain`);
-            }
+            state.chain.accept(block);
+            this.block.nouce = 0;
         } catch (e) {
             this.stop();
             postMessage({
                 type: 'queryPeer'
             });
-            throw e;
+            throw new Error(`${state.id} ${e.message}`);
         }
     },
 
     receiveBlocks(blocks) {
-        console.log(state.id, blocks.length);
         state.chain.blocks = blocks;
         this.start();
     },

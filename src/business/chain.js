@@ -1,6 +1,6 @@
 import Block from 'business/block';
 
-const difficulty = 2;
+const difficulty = 3;
 
 class Chain {
     constructor(blocks) {
@@ -35,9 +35,9 @@ class Chain {
         } else if (prev.index > block.index - 1) {
             return true;
         } else if (prev.index < block.index - 1) {
-            return false;
+            throw new Error('outdate chain');
         } else {
-            throw new Error('invalid block');
+            throw new Error('conflict block');
         }
     }
 

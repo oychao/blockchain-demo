@@ -2,58 +2,71 @@ import Chain from 'business/chain';
 import Block from 'business/block';
 import inherit from 'utils/inherit';
 
-const state = {};
+const transSize = 3;
 
-const strategies = {
-    init(payload) {
-        state.id = payload.id;
-        state.chain = Reflect.construct(Chain, [payload.chain.blocks]);
-    },
+class Digger {
+    constructor() {
+        this.transPool = [];
+    }
 
-    start() {
-        this.block = new Block(state.id, Math.random(), state.chain.lastBlock());
+    init({ id, chain: { blocks } }) {
+        this.id = id;
+        this.chain = Reflect.construct(Chain, [blocks]);
+    }
+
+    startMining() {
+        this.block = new Block(this.id, this.getTransactions(), this.chain.lastBlock());
         this.timer = setInterval(() => {
-            if (state.chain.isValidBlock(this.block)) {
-                state.chain.accept(this.block);
+            if (this.chain.isValidBlock(this.block)) {
+                this.chain.accept(this.block);
                 this.broadcast(this.block);
-                this.block = new Block(state.id, Math.random(), state.chain.lastBlock());
+                this.block = new Block(this.id, this.getTransactions(), this.chain.lastBlock());
             } else {
-                this.block.calcHash(state.chain.lastBlock());
+                this.block.calcHash(this.chain.lastBlock());
             }
         }, 1);
-    },
+    }
 
-    stop() {
+    getTransactions() {
+        return [{
+            from: 'btc',
+            to: this.id,
+            value: Chain.initReward * (.5 ** Math.floor((this.chain.lastBlock().index + 1) / Chain.binThreshold))
+        }];
+    }
+
+    stopMining() {
         clearInterval(this.timer);
-    },
+    }
 
-    receive(block) {
+    receiveBlock(block) {
         try {
-            state.chain.accept(block);
+            this.chain.accept(block);
+            this.block.transactions = this.getTransactions();
             this.block.nouce = 0;
         } catch (e) {
-            this.stop();
+            this.stopMining();
             postMessage({
                 type: 'queryPeer'
             });
-            throw new Error(`${state.id} ${e.message}`);
+            throw new Error(`${this.id} ${e.message}`);
         }
-    },
+    }
 
     receiveBlocks(blocks) {
-        state.chain.blocks = blocks;
-        this.start();
-    },
+        this.chain.blocks = blocks;
+        this.startMining();
+    }
 
     queryBlocks(minerId) {
         postMessage({
             type: 'getBlocks',
             payload: {
                 minerId,
-                blocks: state.chain.blocks
+                blocks: this.chain.blocks
             }
         });
-    },
+    }
 
     broadcast(block) {
         postMessage({
@@ -61,6 +74,8 @@ const strategies = {
             payload: block
         });
     }
-};
+}
 
-onmessage = e => void strategies[e.data.type](e.data.payload);
+const digger = new Digger();
+
+onmessage = e => void digger[e.data.type](e.data.payload);

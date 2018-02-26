@@ -6,7 +6,7 @@ class Participant {
         if (!worker instanceof Worker) {
             throw new Error('Worker not given');
         }
-        this.id = id;
+        this._id = id;
         this.worker = worker;
     }
 

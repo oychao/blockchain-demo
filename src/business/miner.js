@@ -1,27 +1,35 @@
 import Participant from 'business/participant';
 import Worker from 'business/miner.worker';
+import Investor from 'business/investor';
+import Block from 'business/block';
+import inherit from 'utils/inherit';
 
 class Miner extends Participant {
     constructor(id, chain) {
         super(id, new Worker());
+        this.investor = new Investor(id);
+        this.id = `miner-${id}`;
+
+        this.worker.onmessage = e => {
+            this[e.data.type](e.data.payload);
+        };
         this.worker.postMessage({
             type: 'init',
             payload: { id, chain }
         });
-        this.worker.onmessage = e => {
-            this[e.data.type](e.data.payload);
-        };
-        this.peers = [];
         this.worker.postMessage({
-            type: 'start'
+            type: 'startMining'
         });
+
+        this.peers = [];
         this.refreshing = false;
-        this.queryTransactions = {};
+        this.peerQueries = {};
+        this.transactions = [];
     }
 
     broadcast(block) {
-        console.log(block.index, block.payload.minerId, block.nonce,
-            block.prevHash.slice(0, 10), block.hash.slice(0, 10),);
+        inherit(block, Block);
+        console.log(block.toString());
         this.peers.forEach(m => {
             m.receive(block);
         });
@@ -29,7 +37,7 @@ class Miner extends Participant {
 
     receive(block) {
         this.worker.postMessage({
-            type: 'receive',
+            type: 'receiveBlock',
             payload: block
         });
     }
@@ -57,7 +65,7 @@ class Miner extends Participant {
     }
 
     queryBlocks(minerId, callback) {
-        this.queryTransactions[minerId] = callback;
+        this.peerQueries[minerId] = callback;
         this.worker.postMessage({
             type: 'queryBlocks',
             payload: minerId
@@ -66,8 +74,8 @@ class Miner extends Participant {
 
     getBlocks({ minerId, blocks }) {
         try {
-            this.queryTransactions[minerId].call(null, blocks);
-            delete this.queryTransactions[minerId];
+            this.peerQueries[minerId].call(null, blocks);
+            delete this.peerQueries[minerId];
         } catch (e) {
             throw e;
         }

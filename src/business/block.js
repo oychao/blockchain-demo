@@ -3,12 +3,12 @@ import crypto from 'crypto';
 const crypter = crypto.createHash("sha256");
 
 class Block {
-    constructor(minerId, transactions = [], prevBlock = {
+    constructor(minerId, transacs = [], prevBlock = {
         index: -1,
         hash: '0000000000000000000'
     }) {
         this.miner = minerId;
-        this.transactions = transactions;
+        this.transacs = transacs;
         this.nonce = 0;
         this.prevHash = prevBlock.hash;
         this.index = prevBlock.index + 1;
@@ -27,8 +27,8 @@ class Block {
 
     getCyphertext() {
         let cyphertext = `${this.index}${this.prevHash}${this.timestamp}${this.nonce}`;
-        this.transactions.forEach(trans => cyphertext += trans.from || trans.coinbase + trans.to + trans.value);
-        return crypter.update(cyphertext).digest("hex");
+        this.transacs.forEach(trans => cyphertext += trans.from || trans.coinbase + trans.to + trans.value);
+        return crypter.update(cyphertext).digest('hex');
     }
 
     toString() {

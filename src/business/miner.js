@@ -5,7 +5,7 @@ import Block from 'business/block';
 import inherit from 'utils/inherit';
 
 class Miner extends Participant {
-    constructor(id, chain) {
+    constructor(id, investor, chain) {
         super(id, new Worker());
         this.investor = new Investor(id);
         this.id = `miner-${id}`;
@@ -15,7 +15,7 @@ class Miner extends Participant {
         };
         this.worker.postMessage({
             type: 'init',
-            payload: { chain, id: this.id }
+            payload: { chain, id: this.id, investorId: investor.id }
         });
         this.worker.postMessage({
             type: 'startMining'
@@ -27,9 +27,18 @@ class Miner extends Participant {
         this.transactions = [];
     }
 
+    /**
+     * register a pool for getting transactions
+     * @param {Pool} pool 
+     */
+    registerPool(pool) {
+        this.pool = pool;
+    }
+
     broadcast(block) {
         inherit(block, Block);
         console.log(block.toString());
+        this.pool.receiveBlock(block);
         this.peers.forEach(m => {
             m.receive(block);
         });
@@ -79,6 +88,16 @@ class Miner extends Participant {
         } catch (e) {
             throw e;
         }
+    }
+
+    /**
+     * return new transactions to digger
+     */
+    queryTransactions(num) {
+        this.worker.postMessage({
+            type: 'receiveTransactions',
+            payload: this.pool.getTransactions(num)
+        });
     }
 }
 

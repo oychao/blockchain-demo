@@ -21,21 +21,27 @@ class Contactor {
      * oops! a new miner poped up in the network all of a sudden
      */
     popupMiner() {
-        const miner = new Miner(id++, store.chain)
+        const investor = this.popupInvestor(id);
+        const miner = new Miner(id++, investor, store.chain);
         this.pool.registerMiner(miner);
+        miner.registerPool(this.pool);
         Object.keys(this.pool.miners).forEach(k => {
             const m = this.pool.miners[k];
             miner.acquaint(m);
             m.acquaint(miner);
         });
+        return miner;
     }
 
     /**
      * oops! a new investor poped up in the network all of a sudden
+     * @param {Number} _id ${id} if not given
      */
-    popupInvestor() {
-        const investor = new Investor(id++);
+    popupInvestor(_id) {
+        _id = _id || id++;
+        const investor = new Investor(_id);
         this.pool.registerInvestor(investor);
+        return investor;
     }
 
     /**

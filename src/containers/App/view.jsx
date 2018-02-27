@@ -31,6 +31,10 @@ class App extends React.Component {
         return (
             <div id="app">
                 <h1>A BlockChain Demo</h1>
+                <p>Click <strong>[add miner]</strong> to add miners, for preventing conflict(not handled for now), 3 to 6 miners are recommended.</p>
+                <p>Click <strong>[add investor]</strong> to add investor, which will buy or sell BTC.</p>
+                <p>Check the console</p>
+                <hr />
                 <h2>Miner Number: {this.state.minerCount}</h2>
                 <button onClick={this.handleAddMiner}>add miner</button>
                 <hr />

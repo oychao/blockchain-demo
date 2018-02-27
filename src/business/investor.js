@@ -1,18 +1,22 @@
-import Participant from 'business/participant';
-
-class Investor extends Participant {
+class Investor {
     constructor(id) {
-        super(id);
         this.id = `investor-${id}`;
         this.balance = 0;
     }
 
-    receiveBtc(amount) {
-        this.balance += amount;
+    receiveBtc(value) {
+        this.balance += value;
     }
 
-    spendBtc(mount) {
-        this.balance -= amount;
+    spendBtc(value) {
+        this.balance -= value;
+    }
+
+    /**
+     * reset balance to 0
+     */
+    resetBtc() {
+        this.balance = 0;
     }
 }
 

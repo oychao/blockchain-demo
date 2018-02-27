@@ -60,8 +60,12 @@ class Chain {
         return true;
     }
 
+    /**
+     * apply callback onto all transactions in the chain
+     * @param {Function} callback 
+     */
     iterTrans(callback) {
-        this.blocks.forEach(block => block.transactions.forEach(trans => callback.call(null, trans)));
+        this.blocks.forEach(block => block.transacs.forEach(trans => callback.call(null, trans)));
     }
 }
 

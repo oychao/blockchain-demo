@@ -1,50 +1,119 @@
+import crypto from 'crypto';
+
 import store from 'store';
 import Chain from 'business/chain';
 
+const crypter = crypto.createHash('sha256');
+
+/**
+ * generate a random index number less than ${upperLimit}
+ * @param {Number} upperLimit 
+ */
 const randomIdx = upperLimit => Math.floor(Math.random() * Math.round(upperLimit));
 
+/**
+ * generate a random decimal number less than half of ${upperLimit},
+ * accurate to 2 decimal places
+ * @param {Number} upperLimit 
+ */
+const randomBtc = upperLimit => +((Math.random() * upperLimit).toFixed(2)) / 2;
+
+/**
+ * mine pool, transactions generated here
+ */
 class Pool {
     constructor() {
+        this.transactions = {};
         this.miners = {};
         this.investors = {};
+        this.investorCount = 0;
         this.chain = store.chain;
+        this.generateTransaction();
+        this.calculateBalance = this.calculateBalance.bind(this)
     }
 
     /**
      * start generating transaction randomly
      */
     generateTransaction() {
-        setInterval(() => {
-            if (!this.investors.length) {
-                return;
-            }
-            const from = randomIdx(this.investors.length);
-            let to = randomIdx(this.investors.length);
-            while (from === to) {
-                to = randomIdx(this.investors.length);
-            }
+        if (!this.timer) {
+            // generate a transaction every 0.1 second,
+            // if investor less than 1 or random seller's balance is 0
+            // or random seller and random buy are same investor,
+            // skip and continue
+            this.timer = setInterval(() => {
+                if (!this.investorCount) {
+                    return;
+                }
+                const fromIdx = randomIdx(this.investorCount);
+                let toIdx = randomIdx(this.investorCount);
+                if (fromIdx === toIdx) {
+                    return;
+                }
+                const fromInvestor = this.investorIdxOf(fromIdx);
+                const toInvestor = this.investorIdxOf(toIdx);
+                if (fromInvestor.balance === 0) {
+                    return;
+                }
+                const value = randomBtc(fromInvestor.balance);
+                // tell investors that their balances have been Fchanged fo preventing double spend
+                fromInvestor.spendBtc(value);
+                toInvestor.receiveBtc(value);
+                const hash = crypter.update(fromInvestor.id + toInvestor.id + value).digest('hex');
+                this.transactions[hash] = { hash, value, from: fromInvestor.id, to: toInvestor.id };
+            }, 1.5e3);
+        }
+    }
 
-        }, 1e2);
+    investorIdxOf(idx) {
+        return this.investors[Object.keys(this.investors)[idx]]
     }
 
     /**
-     * calculate balances of all investors
+     * stop generating transactions
      */
-    calculateBalance() {
+    stop() {
+        if (this.timer) {
+            clearInterval(this.timer);
+            delete this.timer;
+        }
+    }
+
+    /**
+     * calculate balances of all investors by iterating all transactions
+     * in the chain
+     */
+    calculateBalanceInChain() {
+        this.chain.iterTrans(this.calculateBalance);
+    }
+
+    /**
+     * calculate balances of all investors by iterating all transactions
+     * out the chain, note this method must be invoked after ${calcylateBalanceInChain}
+     * being invoked
+     */
+    calculateBalanceOutChain() {
+        const { transactions } = this;
+        Object.keys(transactions).map(k => transactions[k]).forEach(this.calculateBalance);
+    }
+
+    /**
+     * calculate balance with one transaction
+     * @param {Transaction} transac
+     */
+    calculateBalance(transac) {
         const { investors } = this;
-        this.chain.iterTrans((trans, idx) => {
-            const { from, to, value } = trans;
-            if (idx === 0) {
-                if (investors[to]) {
-                    investors[to].receiveBtc(value);
-                }
-            } else {
-                if (investors[from] && investors[to]) {
-                    investors[from].spendBtc(value);
-                    investors[to].receiveBtc(value);
-                }
+        const { from, to, value } = transac;
+        if (!from) {
+            if (investors[to]) {
+                investors[to].receiveBtc(value);
             }
-        });
+        } else {
+            if (investors[from] && investors[to]) {
+                investors[from].spendBtc(value);
+                investors[to].receiveBtc(value);
+            }
+        }
     }
 
     /**
@@ -53,9 +122,20 @@ class Pool {
      */
     receiveBlock(block) {
         try {
+            Object.keys(this.investors).forEach(k => void this.investors[k].resetBtc());
             this.chain.accept(block);
-            this.calculateBalance();
-        } catch (e) { }
+            this.calculateBalanceInChain();
+            Object.keys(this.investors).forEach(k => void console.log(this.investors[k]));
+            console.log(this.getTransactions().length);
+            block.transacs.forEach(transac => {
+                if (transac.hash) {
+                    delete this.transactions[transac.hash];
+                }
+            });
+            this.calculateBalanceOutChain();
+        } catch (e) {
+            throw e;
+        }
     }
 
     /**
@@ -71,18 +151,21 @@ class Pool {
      * @param {Investor} investor 
      */
     registerInvestor(investor) {
-        this.investors[investor.id] = this.investor;
+        this.investorCount++;
+        this.investors[investor.id] = investor;
     }
 
     /**
      * miners need transactions to construct a new block
-     * @param {Number} num 
+     * @param {Number} num if not given, return all transactions
      */
     getTransactions(num) {
+        const ks = Object.keys(this.transactions);
+        const transacs = ks.map(k => this.transactions[k]);
         if (!num) {
-            return this.transactions;
+            return transacs;
         } else {
-            return this.transactions.slice(0, 3);
+            return transacs.slice(0, num);
         }
     }
 

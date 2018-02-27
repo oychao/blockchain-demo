@@ -4,9 +4,16 @@ class Investor extends Participant {
     constructor(id) {
         super(id);
         this.id = `investor-${id}`;
+        this.balance = 0;
     }
 
-    send() {}
+    receiveBtc(amount) {
+        this.balance += amount;
+    }
+
+    spendBtc(mount) {
+        this.balance -= amount;
+    }
 }
 
 export default Investor;

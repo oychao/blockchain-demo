@@ -5,7 +5,7 @@ const crypter = crypto.createHash("sha256");
 class Block {
     constructor(minerId, transactions = [], prevBlock = {
         index: -1,
-        hash: 'Hello Block Chain'
+        hash: '0000000000000000000'
     }) {
         this.miner = minerId;
         this.transactions = transactions;
@@ -27,7 +27,7 @@ class Block {
 
     getCyphertext() {
         let cyphertext = `${this.index}${this.prevHash}${this.timestamp}${this.nonce}`;
-        this.transactions.forEach(trans => cyphertext += trans.from + trans.to + trans.amount);
+        this.transactions.forEach(trans => cyphertext += trans.from || trans.coinbase + trans.to + trans.value);
         return crypter.update(cyphertext).digest("hex");
     }
 

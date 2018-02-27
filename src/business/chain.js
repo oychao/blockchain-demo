@@ -3,7 +3,7 @@ import Block from 'business/block';
 const difficulty = 3;
 
 const initReward = 50;
-const binThreshold = 5;
+const binThreshold = 10;
 
 class Chain {
     constructor(blocks) {
@@ -12,9 +12,9 @@ class Chain {
         } else {
             this.blocks = [];
             const block = new Block('Genesis Block', [{
-                from: 'coinbase: The Times 03/Jan/2009 Chancellor on brink of second bailout for banks',
+                coinbase: 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks',
                 to: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-                amount: initReward
+                value: initReward
             }]);
             while (!this.validDiffculty(block)) {
                 block.calcHash();
@@ -60,8 +60,8 @@ class Chain {
         return true;
     }
 
-    print() {
-        this.blocks.forEach(b => void console.log(b));
+    iterTrans(callback) {
+        this.blocks.forEach(block => block.transactions.forEach(trans => callback.call(null, trans)));
     }
 }
 

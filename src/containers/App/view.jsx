@@ -3,30 +3,39 @@ import { hot } from 'react-hot-loader';
 
 import 'containers/App/style.css';
 
-import Contactor from 'business/contactor';
-
-const contactor = new Contactor();
-let id = 0;
+import contactor from 'business/contactor';
 
 class App extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            count: 0
+            minerCount: 0,
+            investorCount: 0
         };
-        this.handleClick = this.handleClick.bind(this);
+        this.handleAddMiner = this.handleAddMiner.bind(this);
+        this.handleAddInvestor = this.handleAddInvestor.bind(this);
     }
-    handleClick() {
-        contactor.createMiner(`${++id}`);
+    handleAddMiner() {
+        contactor.popupMiner();
         this.setState({
-            count: contactor.miners.length
+            minerCount: contactor.getMinerLen()
+        });
+    }
+    handleAddInvestor() {
+        contactor.popupInvestor();
+        this.setState({
+            investorCount: contactor.getInvestorLen()
         });
     }
     render() {
         return (
             <div id="app">
-                <h1>{this.state.count}</h1>
-                <button onClick={this.handleClick}>click me</button>
+                <h1>A BlockChain Demo</h1>
+                <h2>Miner Number: {this.state.minerCount}</h2>
+                <button onClick={this.handleAddMiner}>add miner</button>
+                <hr />
+                <h2>Investor Number: {this.state.investorCount}</h2>
+                <button onClick={this.handleAddInvestor}>add investor</button>
             </div>
         );
     }

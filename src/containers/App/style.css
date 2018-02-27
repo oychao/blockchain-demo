@@ -1,0 +1,8 @@
+#app {
+    overflow: hidden;
+    height: 100%;
+    background-color: violet;
+}
+#app button {
+    font-size: 1.1em;
+}

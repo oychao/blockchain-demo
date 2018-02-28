@@ -5,7 +5,8 @@
   "license": "WTFPL",
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "eslint": "eslint ."
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.39",
@@ -14,9 +15,13 @@
     "@babel/preset-env": "^7.0.0-beta.39",
     "@babel/preset-stage-0": "^7.0.0-beta.39",
     "@babel/register": "^7.0.0-beta.39",
+    "babel-eslint": "^8.2.2",
     "babel-loader": "8.0.0-beta.0",
+    "babel-plugin-react": "^1.0.0",
     "clean-webpack-plugin": "^0.1.18",
     "css-loader": "^0.28.9",
+    "eslint": "^4.18.1",
+    "eslint-plugin-react": "^7.7.0",
     "html-webpack-plugin": "^2.30.1",
     "react-hot-loader": "^4.0.0-beta.22",
     "script-ext-html-webpack-plugin": "^1.8.8",

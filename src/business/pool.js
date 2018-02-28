@@ -6,7 +6,7 @@ import Transaction from "business/transaction";
  * generate a random index number less than ${upperLimit}
  * @param {Number} upperLimit 
  */
-const randomIdx = upperLimit => Math.floor(Math.random() * Math.round(upperLimit));
+const randomIdx = upperLimit => (Math.random() * (upperLimit |> Math.round)) |> Math.floor;
 
 /**
  * generate a random decimal number less than half of ${upperLimit},
@@ -26,7 +26,7 @@ class Pool {
         this.investorCount = 0;
         this.chain = store.chain;
         this.generateTransaction();
-        this.calculateBalance = this.calculateBalance.bind(this)
+        this.calculateBalance = :: this.calculateBalance;
     }
 
     /**

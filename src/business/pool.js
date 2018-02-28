@@ -1,9 +1,6 @@
-import crypto from 'crypto';
-
 import store from 'store';
 import Chain from 'business/chain';
-
-const crypter = crypto.createHash('sha256');
+import Transaction from "business/transaction";
 
 /**
  * generate a random index number less than ${upperLimit}
@@ -59,8 +56,8 @@ class Pool {
                 // tell investors that their balances have been Fchanged fo preventing double spend
                 fromInvestor.spendBtc(value);
                 toInvestor.receiveBtc(value);
-                const hash = crypter.update(fromInvestor.id + toInvestor.id + value).digest('hex');
-                this.transactions[hash] = { hash, value, from: fromInvestor.id, to: toInvestor.id };
+                const transac = new Transaction(fromInvestor.id, toInvestor.id, value);
+                this.transactions[transac.hash] = transac;
             }, 1.5e3);
         }
     }
@@ -126,12 +123,12 @@ class Pool {
             this.chain.accept(block);
             this.calculateBalanceInChain();
             Object.keys(this.investors).forEach(k => void console.log(this.investors[k]));
-            console.log(this.getTransactions().length);
             block.transacs.forEach(transac => {
                 if (transac.hash) {
                     delete this.transactions[transac.hash];
                 }
             });
+            console.log(this.getTransactions().length);
             this.calculateBalanceOutChain();
         } catch (e) {
             throw e;

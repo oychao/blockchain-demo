@@ -1,4 +1,5 @@
 import Block from 'business/block';
+import Transaction from 'business/transaction';
 
 const difficulty = 3;
 
@@ -11,11 +12,9 @@ class Chain {
             this.blocks = blocks;
         } else {
             this.blocks = [];
-            const block = new Block('Genesis Block', [{
-                coinbase: 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks',
-                to: '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa',
-                value: initReward
-            }]);
+            const block = new Block('Genesis Block', [new Transaction(
+                undefined, '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', initReward,
+                'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks')]);
             while (!this.validDiffculty(block)) {
                 block.calcHash();
             }

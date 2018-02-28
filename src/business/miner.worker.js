@@ -1,5 +1,6 @@
 import Chain from 'business/chain';
 import Block from 'business/block';
+import Transaction from 'business/transaction';
 import inherit from 'utils/inherit';
 
 const transSize = 10;
@@ -34,10 +35,9 @@ class Digger {
 
     getTransactions() {
         const ks = Object.keys(this.transactions);
-        return [{
-            to: this.investorId,
-            value: Chain.initReward * (.5 ** Math.floor((this.chain.lastBlock().index + 1) / Chain.binThreshold))
-        }].concat(ks.map(k => this.transactions[k]));
+        return [new Transaction(undefined, this.investorId,
+            Chain.initReward * (.5 ** Math.floor((this.chain.lastBlock().index + 1) / Chain.binThreshold))
+        )].concat(ks.map(k => this.transactions[k]));
     }
 
     stopMining() {

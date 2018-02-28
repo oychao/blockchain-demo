@@ -12,8 +12,8 @@ class App extends React.Component {
             minerCount: 0,
             investorCount: 0
         };
-        this.handleAddMiner = this.handleAddMiner.bind(this);
-        this.handleAddInvestor = this.handleAddInvestor.bind(this);
+        this.handleAddMiner = :: this.handleAddMiner;
+        this.handleAddInvestor = :: this.handleAddInvestor;
     }
     handleAddMiner() {
         contactor.popupMiner();

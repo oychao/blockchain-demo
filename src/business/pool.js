@@ -34,7 +34,7 @@ class Pool {
      */
     generateTransaction() {
         if (!this.timer) {
-            // generate a transaction every 0.1 second,
+            // generate a transaction every 1.5 second,
             // if investor less than 1 or random seller's balance is 0
             // or random seller and random buy are same investor,
             // skip and continue

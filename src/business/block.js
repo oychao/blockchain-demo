@@ -1,6 +1,4 @@
-import crypto from 'crypto';
-
-const crypter = crypto.createHash("sha256");
+import crypter from 'utils/crypter';
 
 class Block {
     constructor(minerId, transacs = [], prevBlock = {

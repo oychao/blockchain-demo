@@ -16,30 +16,29 @@ class Digger {
         this.chain = Reflect.construct(Chain, [blocks]);
     }
 
+    /**
+     * start mining
+     */
     startMining() {
         this.block = new Block(this.id, this.getTransactions(), this.chain.lastBlock());
         this.timer = setInterval(() => {
-            if (this.chain.isValidBlock(this.block)) {
-                this.chain.accept(this.block);
-                this.broadcast(this.block);
-                postMessage({
-                    type: 'queryTransactions',
-                    payload: transSize
-                });
+            try {
+                if (this.chain.isValidBlock(this.block)) {
+                    this.chain.accept(this.block);
+                    this.broadcast(this.block);
+                    this.queryTransactions();
+                } else {
+                    this.block.calcHash(this.chain.lastBlock());
+                }
+            } catch (e) {
                 this.stopMining();
-            } else {
-                this.block.calcHash(this.chain.lastBlock());
             }
         }, 1);
     }
 
-    getTransactions() {
-        const ks = Object.keys(this.transactions);
-        return [new Transaction(undefined, this.investorId,
-            Chain.initReward * (.5 ** Math.floor((this.chain.lastBlock().index + 1) / Chain.binThreshold))
-        )].concat(ks.map(k => this.transactions[k]));
-    }
-
+    /**
+     * stop mining, reset all transactions, delete working block, and clear mining timer
+     */
     stopMining() {
         this.transactions = {};
         delete this.block;
@@ -55,22 +54,36 @@ class Digger {
     receiveBlock(block) {
         try {
             this.chain.accept(block);
+            this.queryTransactions();
         } catch (e) {
             postMessage({
-                type: 'queryPeer'
-            });
-            throw new Error(`${this.id} ${e.message}`);
-        } finally {
-            postMessage({
-                type: 'queryTransactions',
-                payload: transSize
+                type: 'queryPeer',
+                payload: block.miner
             });
             this.stopMining();
+            throw new Error(`${this.id} ${e.message}, block index: ${this.chain.lastBlock().index}, received block from ${block.miner}`);
         }
     }
 
+    /**
+     * receive blocks from miner, set latest blocks into the chain,
+     * and query miner for latest transactions
+     * @param {Array} blocks 
+     */
     receiveBlocks(blocks) {
         this.chain.blocks = blocks;
+        this.queryTransactions();
+    }
+
+    /**
+     * query miner for new transactions
+     */
+    queryTransactions() {
+        postMessage({
+            type: 'queryTransactions',
+            payload: transSize
+        });
+        this.stopMining();
     }
 
     /**
@@ -82,9 +95,13 @@ class Digger {
         this.startMining();
     }
 
+    /**
+     * return blocks in the chain when miner queried
+     * @param {Sting} minerId 
+     */
     queryBlocks(minerId) {
         postMessage({
-            type: 'getBlocks',
+            type: 'handleQueryBlockCallback',
             payload: {
                 minerId,
                 blocks: this.chain.blocks
@@ -92,6 +109,20 @@ class Digger {
         });
     }
 
+    /**
+     * return transactions, the first one is always coinbase transaction
+     */
+    getTransactions() {
+        const ks = Object.keys(this.transactions);
+        return [new Transaction(undefined, this.investorId,
+            Chain.initReward * (.5 ** Math.floor((this.chain.lastBlock().index + 1) / Chain.binThreshold))
+        )].concat(ks.map(k => this.transactions[k]));
+    }
+
+    /**
+     * send a new block to miner
+     * @param {Block} block 
+     */
     broadcast(block) {
         postMessage({
             type: 'broadcast',

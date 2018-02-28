@@ -38,7 +38,13 @@ class Contactor {
      * @param {Number} _id ${id} if not given
      */
     popupInvestor(_id) {
-        _id = _id || id++;
+        _id = do {
+            if (_id === undefined) {
+                id++;
+            } else {
+                _id;
+            }
+        };
         const investor = new Investor(_id);
         this.pool.registerInvestor(investor);
         return investor;

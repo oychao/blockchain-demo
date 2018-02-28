@@ -1,19 +1,7 @@
 import store from 'store';
 import Chain from 'business/chain';
 import Transaction from "business/transaction";
-
-/**
- * generate a random index number less than ${upperLimit}
- * @param {Number} upperLimit 
- */
-const randomIdx = upperLimit => (Math.random() * (upperLimit |> Math.round)) |> Math.floor;
-
-/**
- * generate a random decimal number less than half of ${upperLimit},
- * accurate to 2 decimal places
- * @param {Number} upperLimit 
- */
-const randomBtc = upperLimit => +((Math.random() * upperLimit).toFixed(2)) / 2;
+import { randomIdx, randomBtc } from 'utils/random';
 
 /**
  * mine pool, transactions generated here
@@ -25,14 +13,15 @@ class Pool {
         this.investors = {};
         this.investorCount = 0;
         this.chain = store.chain;
-        this.generateTransaction();
+        this.startDealing();
         this.calculateBalance = :: this.calculateBalance;
+        this.totalBtc = Chain.initReward;
     }
 
     /**
      * start generating transaction randomly
      */
-    generateTransaction() {
+    startDealing() {
         if (!this.timer) {
             // generate a transaction every 1.5 second,
             // if investor less than 1 or random seller's balance is 0
@@ -69,7 +58,7 @@ class Pool {
     /**
      * stop generating transactions
      */
-    stop() {
+    stopDealing() {
         if (this.timer) {
             clearInterval(this.timer);
             delete this.timer;
@@ -90,8 +79,17 @@ class Pool {
      * being invoked
      */
     calculateBalanceOutChain() {
-        const { transactions } = this;
-        Object.keys(transactions).map(k => transactions[k]).forEach(this.calculateBalance);
+        Object.values(this.transactions).forEach(this.calculateBalance);
+    }
+
+    /**
+     * calculate all BTC in the network
+     */
+    calculateTotalBtc() {
+        this.totalBtc = Object.values(this.investors).reduce(
+            (acc, investor) => acc + investor.balance,
+            Chain.initReward
+        );
     }
 
     /**
@@ -114,24 +112,34 @@ class Pool {
     }
 
     /**
-     * receive a new block, if valid then refresh balances for all investors
+     * receive a new block, if valid then refresh balances for all investors,
+     * if conflict happens, query for latest blocks and refresh the chain
      * @param {Block} block 
      */
     receiveBlock(block) {
         try {
-            Object.keys(this.investors).forEach(k => void this.investors[k].resetBtc());
+            Object.values(this.investors).forEach(investor => void investor.resetBtc());
             this.chain.accept(block);
             this.calculateBalanceInChain();
-            Object.keys(this.investors).forEach(k => void console.log(this.investors[k]));
+            this.calculateTotalBtc();
+            this.printEcology();
             block.transacs.forEach(transac => {
                 if (transac.hash) {
                     delete this.transactions[transac.hash];
                 }
             });
-            console.log(this.getTransactions().length);
             this.calculateBalanceOutChain();
         } catch (e) {
-            throw e;
+            const { miners } = this;
+            const minerArr = Object.values(miners);
+            let miner = miners[block.miner] || minerArr[randomIdx(minerArr.length)];
+            this.stopDealing();
+            miner.queryBlocks('pool', blocks => {
+                console.log(`POOL: receive blocks from ${miner.id}`);
+                this.chain.blocks = blocks;
+                this.startDealing();
+            });
+            throw new Error(`${e.message}, block received from ${block.miner}`);
         }
     }
 
@@ -157,8 +165,7 @@ class Pool {
      * @param {Number} num if not given, return all transactions
      */
     getTransactions(num) {
-        const ks = Object.keys(this.transactions);
-        const transacs = ks.map(k => this.transactions[k]);
+        const transacs = Object.values(this.transactions);
         if (!num) {
             return transacs;
         } else {
@@ -178,6 +185,15 @@ class Pool {
      */
     getInvestorLen() {
         return Object.keys(this.investors).length;
+    }
+
+    /**
+     * print all pool info to console
+     */
+    printEcology() {
+        console.log('POOL: investor list:');
+        Object.values(this.investors).forEach(investor => void console.log(investor));
+        console.log(`POOL: total BTC: ${this.totalBtc}`);
     }
 }
 

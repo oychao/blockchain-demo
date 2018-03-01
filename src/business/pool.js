@@ -122,7 +122,8 @@ class Pool {
             this.chain.accept(block);
             this.calculateBalanceInChain();
             this.calculateTotalBtc();
-            this.printEcology();
+            console.log(block.transacs[0].value);
+            this.printInfo();
             block.transacs.forEach(transac => {
                 if (transac.hash) {
                     delete this.transactions[transac.hash];
@@ -135,7 +136,6 @@ class Pool {
             let miner = miners[block.miner] || minerArr[randomIdx(minerArr.length)];
             this.stopDealing();
             miner.queryBlocks('pool', blocks => {
-                console.log(`POOL: receive blocks from ${miner.id}`);
                 this.chain.blocks = blocks;
                 this.startDealing();
             });
@@ -190,10 +190,10 @@ class Pool {
     /**
      * print all pool info to console
      */
-    printEcology() {
-        console.log('POOL: investor list:');
-        Object.values(this.investors).forEach(investor => void console.log(investor));
-        console.log(`POOL: total BTC: ${this.totalBtc}`);
+    printInfo() {
+        // console.log('POOL: investor list:');
+        // Object.values(this.investors).forEach(investor => void console.log(investor));
+        console.log(`POOL: chain length: ${this.chain.lastBlock().index}, total BTC: ${this.totalBtc}`);
     }
 }
 

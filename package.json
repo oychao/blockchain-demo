@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server",
-    "eslint": "eslint ."
+    "lint": "eslint ."
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.40",
@@ -31,6 +31,7 @@
     "worker-loader": "^1.1.0"
   },
   "dependencies": {
+    "promise-worker-bi": "^2.2.1",
     "react": "^16.2.0",
     "react-dom": "^16.2.0"
   }

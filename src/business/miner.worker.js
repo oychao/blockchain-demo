@@ -1,9 +1,11 @@
+import PromiseWorker from 'promise-worker-bi';
+
 import Chain from 'business/chain';
 import Block from 'business/block';
 import Transaction from 'business/transaction';
 import inherit from 'utils/inherit';
 
-const transSize = 10;
+const pWorker = new PromiseWorker();
 
 class Digger {
     constructor() {
@@ -26,7 +28,6 @@ class Digger {
                 if (this.chain.isValidBlock(this.block)) {
                     this.chain.accept(this.block);
                     this.broadcast(this.block);
-                    this.queryTransactions();
                 } else {
                     this.block.calcHash(this.chain.lastBlock());
                 }
@@ -54,12 +55,7 @@ class Digger {
     receiveBlock(block) {
         try {
             this.chain.accept(block);
-            this.queryTransactions();
         } catch (e) {
-            postMessage({
-                type: 'queryPeer',
-                payload: block.miner
-            });
             this.stopMining();
             throw new Error(`${this.id} ${e.message}, block index: ${this.chain.lastBlock().index}, received block from ${block.miner}`);
         }
@@ -68,22 +64,11 @@ class Digger {
     /**
      * receive blocks from miner, set latest blocks into the chain,
      * and query miner for latest transactions
-     * @param {Array} blocks 
+     * @param {Object} param0 
      */
-    receiveBlocks(blocks) {
+    receiveBlocks({ blocks, transacs }) {
         this.chain.blocks = blocks;
-        this.queryTransactions();
-    }
-
-    /**
-     * query miner for new transactions
-     */
-    queryTransactions() {
-        postMessage({
-            type: 'queryTransactions',
-            payload: transSize
-        });
-        this.stopMining();
+        this.receiveTransactions(transacs);
     }
 
     /**
@@ -93,20 +78,6 @@ class Digger {
     receiveTransactions(transacs) {
         transacs.forEach(transac => this.transactions[transac.hash] = transac);
         this.startMining();
-    }
-
-    /**
-     * return blocks in the chain when miner queried
-     * @param {Sting} minerId 
-     */
-    queryBlocks(minerId) {
-        postMessage({
-            type: 'handleQueryBlockCallback',
-            payload: {
-                minerId,
-                blocks: this.chain.blocks
-            }
-        });
     }
 
     /**
@@ -120,17 +91,25 @@ class Digger {
     }
 
     /**
+     * return blocks in the chain when miner queried
+     */
+    queryBlocks() {
+        return this.chain.blocks;
+    }
+
+    /**
      * send a new block to miner
      * @param {Block} block 
      */
     broadcast(block) {
-        postMessage({
+        this.stopMining();
+        pWorker.postMessage({
             type: 'broadcast',
             payload: block
-        });
+        }).then(transacs => this.receiveTransactions(transacs));
     }
 }
 
 const digger = new Digger();
 
-onmessage = e => void digger[e.data.type](e.data.payload);
+pWorker.register(action => digger[action.type](action.payload));

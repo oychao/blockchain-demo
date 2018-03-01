@@ -1,10 +1,11 @@
 import Block from 'business/block';
 import Transaction from 'business/transaction';
 
-const difficulty = 3;
+const difficulty = 2;
 
 const initReward = 50;
 const binThreshold = 10;
+const transSize = 10;
 
 class Chain {
     constructor(blocks) {
@@ -70,5 +71,6 @@ class Chain {
 
 Chain.initReward = initReward;
 Chain.binThreshold = binThreshold;
+Chain.transSize = 10;
 
 export default Chain;

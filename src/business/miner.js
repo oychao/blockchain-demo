@@ -1,4 +1,5 @@
 import Participant from 'business/participant';
+import Chain from 'business/chain';
 import Worker from 'business/miner.worker';
 import Investor from 'business/investor';
 import Block from 'business/block';
@@ -10,20 +11,16 @@ class Miner extends Participant {
         this.investor = new Investor(id);
         this.id = `miner-${id}`;
 
-        this.worker.onmessage = e => {
-            this[e.data.type](e.data.payload);
-        };
-        this.worker.postMessage({
+        this.pWorker.postMessage({
             type: 'init',
             payload: { chain, id: this.id, investorId: investor.id }
         });
-        this.worker.postMessage({
+        this.pWorker.postMessage({
             type: 'startMining'
         });
 
         this.peers = [];
         this.refreshing = false;
-        this.peerQueryCallbacks = {};
         this.transactions = [];
     }
 
@@ -41,24 +38,12 @@ class Miner extends Participant {
      */
     broadcast(block) {
         inherit(block, Block);
-        console.log(`${this.id.toUpperCase()}:`);
-        console.log(block.toString());
-        // console.log(block.miner, block.index);
+        // this.printInfo();
         this.pool.receiveBlock(block);
         this.peers.forEach(m => {
             m.receive(block);
         });
-    }
-
-    /**
-     * receive a new block from other miner
-     * @param {Block} block 
-     */
-    receive(block) {
-        this.worker.postMessage({
-            type: 'receiveBlock',
-            payload: block
-        });
+        return this.pool.getTransactions(Chain.transSize);
     }
 
     /**
@@ -75,6 +60,20 @@ class Miner extends Participant {
     }
 
     /**
+     * receive a new block from other miner
+     * @param {Block} block 
+     */
+    receive(block) {
+        this.pWorker.postMessage({
+            type: 'receiveBlock',
+            payload: block
+        }).catch(err => {
+            this.queryPeer(block.miner);
+            throw err;
+        });
+    }
+
+    /**
      * blocks in  the are outdate, query other miner for refreshing chain
      * @param {String} minerId if given, query specific miner, otherwise query a random one
      */
@@ -86,58 +85,40 @@ class Miner extends Participant {
         if (!peer) {
             throw new Error('No valid miner');
         }
-        peer.queryBlocks(this.id, blocks => {
-            this.worker.postMessage({
+        peer.queryBlocks(this.id).then(blocks => {
+            this.pWorker.postMessage({
                 type: 'receiveBlocks',
-                payload: blocks
+                payload: { blocks, transacs: this.pool.getTransactions(Chain.transSize) }
             });
         });
     }
 
     /**
-     * queried by someone whose chain is outdate for refreshing their chain
+     * queried by someone whose chain is outdate for refreshing their chain,
+     * return a promise
      * @param {String} minerId 
-     * @param {Function} callback 
      */
-    queryBlocks(minerId, callback) {
-        if (minerId === 'pool') {
-            this.poolQueryCallback = callback;
-        } else {
-            this.peerQueryCallbacks[minerId] = callback;
-        }
-        this.worker.postMessage({
+    queryBlocks(minerId) {
+        return this.pWorker.postMessage({
             type: 'queryBlocks',
             payload: minerId
-        });
-    }
-
-    /**
-     * handle callback registered by specific miner after fetching blocks from digger
-     * @param {Object} param0
-     */
-    handleQueryBlockCallback({ minerId, blocks }) {
-        try {
-            if (minerId === 'pool') {
-                this.poolQueryCallback ?.call(null, blocks);
-                delete this.poolQueryCallback;
-            } else {
-                this.peerQueryCallbacks[minerId] ?.call(null, blocks);
-                delete this.peerQueryCallbacks[minerId];
-            }
-        } catch (e) {
-            throw e;
-        }
+        })
     }
 
     /**
      * return new transactions to digger
-     * @param {Number} num transaction count
      */
-    queryTransactions(num) {
+    queryTransactions() {
         this.worker.postMessage({
             type: 'receiveTransactions',
-            payload: this.pool.getTransactions(num)
+            payload: this.pool.getTransactions(Chain.transSize)
         });
+    }
+
+    printInfo() {
+        console.log(`${this.id.toUpperCase()}:`);
+        console.log(block.toString());
+        // console.log(block.miner, block.index);
     }
 }
 

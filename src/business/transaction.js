@@ -19,7 +19,7 @@ class Transaction {
             this.coinbase = coinbase;
             this.hash += coinbase;
         }
-        this.hash = crypter.update(this.hash).digest('hex');
+        this.hash = crypter.update(this.hash).digest('hex').slice(0, 10);
     }
 }
 

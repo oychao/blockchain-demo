@@ -25,11 +25,11 @@ class Miner extends Participant {
     }
 
     /**
-     * register a pool for getting transactions
-     * @param {Pool} pool 
+     * register a exchange for getting transactions
+     * @param {Exchange} exchange 
      */
-    registerPool(pool) {
-        this.pool = pool;
+    registerExchange(exchange) {
+        this.exchange = exchange;
     }
 
     /**
@@ -38,12 +38,12 @@ class Miner extends Participant {
      */
     broadcast(block) {
         inherit(block, Block);
-        // this.printInfo();
-        this.pool.receiveBlock(block);
+        this.printBlock(block);
+        this.exchange.receiveBlock(block);
         this.peers.forEach(m => {
             m.receive(block);
         });
-        return this.pool.getTransactions(Chain.transSize);
+        return this.exchange.getTransactions(Chain.transSize);
     }
 
     /**
@@ -66,7 +66,7 @@ class Miner extends Participant {
     receive(block) {
         this.pWorker.postMessage({
             type: 'receiveBlock',
-            payload: block
+            payload: { block, transacs: this.exchange.getTransactions(Chain.transSize) }
         }).catch(err => {
             this.queryPeer(block.miner);
             throw err;
@@ -88,7 +88,7 @@ class Miner extends Participant {
         peer.queryBlocks(this.id).then(blocks => {
             this.pWorker.postMessage({
                 type: 'receiveBlocks',
-                payload: { blocks, transacs: this.pool.getTransactions(Chain.transSize) }
+                payload: { blocks, transacs: this.exchange.getTransactions(Chain.transSize) }
             });
         });
     }
@@ -111,11 +111,11 @@ class Miner extends Participant {
     queryTransactions() {
         this.worker.postMessage({
             type: 'receiveTransactions',
-            payload: this.pool.getTransactions(Chain.transSize)
+            payload: this.exchange.getTransactions(Chain.transSize)
         });
     }
 
-    printInfo() {
+    printBlock(block) {
         console.log(`${this.id.toUpperCase()}:`);
         console.log(block.toString());
         // console.log(block.miner, block.index);

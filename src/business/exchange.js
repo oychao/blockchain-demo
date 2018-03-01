@@ -2,20 +2,24 @@ import store from 'store';
 import Chain from 'business/chain';
 import Transaction from "business/transaction";
 import { randomIdx, randomBtc } from 'utils/random';
+import App from 'containers/App';
 
 /**
- * mine pool, transactions generated here
+ * exchange, transactions generated here
  */
-class Pool {
-    constructor() {
+class Exchange {
+    constructor(store) {
         this.transactions = {};
         this.miners = {};
         this.investors = {};
         this.investorCount = 0;
-        this.chain = store.chain;
+        this.chain = new Chain();
         this.startDealing();
         this.calculateBalance = :: this.calculateBalance;
         this.totalBtc = Chain.initReward;
+
+        this.store = store;
+        this.store.dispatch(App.actions.addBlock(this.chain.lastBlock()));
     }
 
     /**
@@ -46,6 +50,8 @@ class Pool {
                 fromInvestor.spendBtc(value);
                 toInvestor.receiveBtc(value);
                 const transac = new Transaction(fromInvestor.id, toInvestor.id, value);
+                this.store.dispatch(App.actions.addTransaction(transac));
+                console.log(transac);
                 this.transactions[transac.hash] = transac;
             }, 1.5e3);
         }
@@ -122,20 +128,21 @@ class Pool {
             this.chain.accept(block);
             this.calculateBalanceInChain();
             this.calculateTotalBtc();
-            console.log(block.transacs[0].value);
             this.printInfo();
             block.transacs.forEach(transac => {
                 if (transac.hash) {
+                    this.store.dispatch(App.actions.delTransaction(transac.hash));
                     delete this.transactions[transac.hash];
                 }
             });
             this.calculateBalanceOutChain();
+            this.store.dispatch(App.actions.addBlock(block));
         } catch (e) {
             const { miners } = this;
             const minerArr = Object.values(miners);
             let miner = miners[block.miner] || minerArr[randomIdx(minerArr.length)];
             this.stopDealing();
-            miner.queryBlocks('pool', blocks => {
+            miner.queryBlocks('exchange', blocks => {
                 this.chain.blocks = blocks;
                 this.startDealing();
             });
@@ -144,19 +151,21 @@ class Pool {
     }
 
     /**
-     * register a new miner into pool
+     * register a new miner into exchange
      * @param {Miner} miner 
      */
     registerMiner(miner) {
+        this.store.dispatch(App.actions.addMiner(miner));
         this.miners[miner.id] = miner;
     }
 
     /**
-     * register a new investor into pool
+     * register a new investor into exchange
      * @param {Investor} investor 
      */
     registerInvestor(investor) {
         this.investorCount++;
+        this.store.dispatch(App.actions.addInvestor(investor));
         this.investors[investor.id] = investor;
     }
 
@@ -174,29 +183,29 @@ class Pool {
     }
 
     /**
-     * get miner count in the pool
+     * get miner count in the exchange
      */
     getMinerLen() {
         return Object.keys(this.miners).length;
     }
 
     /**
-     * get investor count in the pool
+     * get investor count in the exchange
      */
     getInvestorLen() {
         return Object.keys(this.investors).length;
     }
 
     /**
-     * print all pool info to console
+     * print all exchange info to console
      */
     printInfo() {
-        // console.log('POOL: investor list:');
-        // Object.values(this.investors).forEach(investor => void console.log(investor));
-        console.log(`POOL: chain length: ${this.chain.lastBlock().index}, total BTC: ${this.totalBtc}`);
+        // console.log('EXCHANGE: investor list:');
+        Object.values(this.investors).forEach(investor => void console.log(investor));
+        console.log(`EXCHANGE: chain length: ${this.chain.lastBlock().index}, total BTC: ${this.totalBtc}`);
     }
 }
 
-const pool = new Pool();
+const exchange = new Exchange(store);
 
-export default pool;
+export default exchange;

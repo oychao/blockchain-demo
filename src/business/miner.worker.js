@@ -23,18 +23,20 @@ class Digger {
      */
     startMining() {
         this.block = new Block(this.id, this.getTransactions(), this.chain.lastBlock());
-        this.timer = setInterval(() => {
-            try {
-                if (this.chain.isValidBlock(this.block)) {
-                    this.chain.accept(this.block);
-                    this.broadcast(this.block);
-                } else {
-                    this.block.calcHash(this.chain.lastBlock());
+        if (!this.timer) {
+            this.timer = setInterval(() => {
+                try {
+                    if (this.chain.isValidBlock(this.block)) {
+                        this.chain.accept(this.block);
+                        this.broadcast(this.block);
+                    } else {
+                        this.block.calcHash(this.chain.lastBlock());
+                    }
+                } catch (e) {
+                    this.stopMining();
                 }
-            } catch (e) {
-                this.stopMining();
-            }
-        }, 1);
+            }, 1);
+        }
     }
 
     /**
@@ -42,19 +44,22 @@ class Digger {
      */
     stopMining() {
         this.transactions = {};
-        delete this.block;
         clearInterval(this.timer);
+        delete this.block;
+        delete this.timer;
     }
 
     /**
      * received a block from other miners, if the block is legal,
      * reset nonce and delete all transactions in order to prevent
      * transaction rewriting, then query miner for new transactions
-     * @param {Block} block 
+     * @param {Object} param0 
      */
-    receiveBlock(block) {
+    receiveBlock({ block, transacs }) {
         try {
+            this.stopMining();
             this.chain.accept(block);
+            this.receiveTransactions(transacs);
         } catch (e) {
             this.stopMining();
             throw new Error(`${this.id} ${e.message}, block index: ${this.chain.lastBlock().index}, received block from ${block.miner}`);

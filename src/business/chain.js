@@ -1,7 +1,7 @@
 import Block from 'business/block';
 import Transaction from 'business/transaction';
 
-const difficulty = 2;
+const difficulty = 3;
 
 const initReward = 50;
 const binThreshold = 10;

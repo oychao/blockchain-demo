@@ -29,7 +29,7 @@ class Exchange {
      */
     startDealing() {
         if (!this.timer) {
-            // generate a transaction every 1.5 second,
+            // generate a transaction every 0.5 second,
             // if investor less than 1 or random seller's balance is 0
             // or random seller and random buy are same investor,
             // skip and continue
@@ -55,7 +55,7 @@ class Exchange {
                 this.transactions[transac.hash] = transac;
                 transac = { ...transac };
                 transac |> App.actions.addTransaction |> this.store.dispatch;
-            }, 1.5e3);
+            }, 5e2);
         }
     }
 
@@ -80,7 +80,7 @@ class Exchange {
     calculateBalanceInChain() {
         this.chain.iterTrans(this.calculateBalance);
         const { investors } = this;
-        Object.keys(investors).map(k => ({ ...investors[k] })) |> App.actions.resetInvestors |> this.store.dispatch;
+        Object.values(investors).map(inv => ({ ...inv })) |> App.actions.resetInvestors |> this.store.dispatch;
     }
 
     /**

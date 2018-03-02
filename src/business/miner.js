@@ -19,8 +19,6 @@ class Miner extends Participant {
         });
 
         this.peers = [];
-        this.refreshing = false;
-        this.transactions = [];
     }
 
     /**
@@ -112,14 +110,6 @@ class Miner extends Participant {
             type: 'receiveTransactions',
             payload: this.exchange.getTransactions(Chain.transSize)
         });
-    }
-
-    /**
-     * return a new vanilla object(no Miner.prototype functions), only necessary info 
-     */
-    toVanillaObj() {
-        const { id } = this;
-        return { id };
     }
 
     /**

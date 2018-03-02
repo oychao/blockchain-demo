@@ -29,13 +29,6 @@ class Block {
         return crypter.update(cyphertext).digest('hex');
     }
 
-    /**
-     * return a vanilla object, no prototype functions
-     */
-    toVanillaObj() {
-        return { ...this };
-    }
-
     toString() {
         return JSON.stringify(this, null, 2);
     }

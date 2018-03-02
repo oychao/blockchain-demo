@@ -13,13 +13,6 @@ class Investor {
     }
 
     /**
-     * return a new vanilla object(no Investor.prototype functions)
-     */
-    toVanillaObj() {
-        return { ...this };
-    }
-
-    /**
      * reset balance to 0
      */
     resetBtc() {

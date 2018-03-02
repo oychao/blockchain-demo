@@ -20,7 +20,8 @@ class Exchange {
         this.totalBtc = Chain.initReward;
 
         this.store = store;
-        this.chain.lastBlock().toVanillaObj() |> App.actions.addBlock |> this.store.dispatch;
+        const block = { ...this.chain.lastBlock() };
+        block |> App.actions.addBlock |> this.store.dispatch;
     }
 
     /**
@@ -50,9 +51,10 @@ class Exchange {
                 // tell investors that their balances have been Fchanged fo preventing double spend
                 fromInvestor.spendBtc(value);
                 toInvestor.receiveBtc(value);
-                const transac = new Transaction(fromInvestor.id, toInvestor.id, value);
-                transac |> App.actions.addTransaction |> this.store.dispatch;
+                let transac = new Transaction(fromInvestor.id, toInvestor.id, value);
                 this.transactions[transac.hash] = transac;
+                transac = { ...transac };
+                transac |> App.actions.addTransaction |> this.store.dispatch;
             }, 1.5e3);
         }
     }
@@ -78,7 +80,7 @@ class Exchange {
     calculateBalanceInChain() {
         this.chain.iterTrans(this.calculateBalance);
         const { investors } = this;
-        Object.keys(investors).map(k => investors[k]) |> App.actions.resetInvestors |> this.store.dispatch;
+        Object.keys(investors).map(k => ({ ...investors[k] })) |> App.actions.resetInvestors |> this.store.dispatch;
     }
 
     /**
@@ -138,7 +140,8 @@ class Exchange {
                 }
             });
             this.calculateBalanceOutChain();
-            block.toVanillaObj() |> App.actions.addBlock |> this.store.dispatch;
+            block = { ...block };
+            block |> App.actions.addBlock |> this.store.dispatch;
         } catch (e) {
             const { miners } = this;
             const minerArr = Object.values(miners);
@@ -157,7 +160,7 @@ class Exchange {
      * @param {Miner} miner 
      */
     registerMiner(miner) {
-        miner.toVanillaObj() |> App.actions.addMiner |> this.store.dispatch;
+        miner.id |> App.actions.addMiner |> this.store.dispatch;
         this.miners[miner.id] = miner;
     }
 
@@ -167,8 +170,9 @@ class Exchange {
      */
     registerInvestor(investor) {
         this.investorCount++;
-        investor.toVanillaObj() |> App.actions.addInvestor |> this.store.dispatch;
         this.investors[investor.id] = investor;
+        investor = { ...investor };
+        investor |> App.actions.addInvestor |> this.store.dispatch;
     }
 
     /**

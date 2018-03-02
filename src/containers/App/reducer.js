@@ -2,15 +2,13 @@ import Chain from 'business/chain';
 import * as actionTypes from './actionTypes';
 
 const reducer = (state = {
-    blocks: [],
     miners: [],
     investors: [],
     transactions: {},
-    newMinerFlag: undefined,
-    newInvestorFlag: undefined
+    blocks: []
 }, action) => {
     const { type, payload } = action;
-    let { blocks, miners, investors, transactions } = state;
+    let { miners, investors, transactions, blocks } = state;
     let totalBtc = 0;
     let newMinerFlag = undefined;
     let newInvestorFlag = undefined;
@@ -27,9 +25,6 @@ const reducer = (state = {
         case actionTypes.MINER_NEW_FLAG:
             newMinerFlag = true;
             break;
-        case actionTypes.MINER_NEW_FLAG_CANCEL:
-            newMinerFlag = undefined;
-            break;
         case actionTypes.INVESTOR_ADD:
             investors = investors.slice();
             newInvestorFlag = undefined;
@@ -37,9 +32,6 @@ const reducer = (state = {
             break;
         case actionTypes.INVESTOR_NEW_FLAG:
             newInvestorFlag = true;
-            break;
-        case actionTypes.INVESTOR_NEW_FLAG_CANCEL:
-            newInvestorFlag = undefined;
             break;
         case actionTypes.INVESTORS_RESET:
             investors = payload.slice();
@@ -52,11 +44,15 @@ const reducer = (state = {
             transactions = Object.assign({}, transactions);
             delete transactions[payload];
             break;
+        case actionTypes.TRANSACTION_DEL_BATCH:
+            transactions = Object.assign({}, transactions);
+            payload.forEach(hash => delete transactions[hash]);
+            break;
         default: ;
     }
     totalBtc = investors.reduce((acc, investor) => acc + investor.balance, totalBtc);
     return {
-        blocks, miners, investors, totalBtc, transactions,
+        miners, investors, totalBtc, transactions, blocks,
         newMinerFlag, newInvestorFlag
     };
 };

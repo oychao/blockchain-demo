@@ -9,6 +9,9 @@ if (!global.Worker) {
 
 let id = 1;
 
+const maxMinerCount = 5;
+const maxInvestorCount = 10;
+
 /**
  * Contactor act like network in real world
  */
@@ -25,6 +28,9 @@ class Contactor {
      * be a infinite call loop
      */
     popupMiner() {
+        if (this.exchange.getMinerLen() >= maxMinerCount) {
+            return;
+        }
         const investor = this.popupInvestor(id);
         const miner = new Miner(`miner-${id++}`, investor, exchange.chain);
         this.exchange.registerMiner(miner);
@@ -43,6 +49,9 @@ class Contactor {
      * @param {Number} _id ${id} if not given
      */
     popupInvestor(_id) {
+        if (this.exchange.getInvestorLen() >= maxInvestorCount) {
+            return;
+        }
         const isMiner = _id !== undefined;
         _id = do {
             if (_id === undefined) {

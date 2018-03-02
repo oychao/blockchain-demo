@@ -14,10 +14,6 @@ export const newMinerFlag = () => ({
     type: actionTypes.MINER_NEW_FLAG
 });
 
-export const newMinerFlagCancle = () => ({
-    type: actionTypes.MINER_NEW_FLAG_CANCEL
-});
-
 export const addInvestor = investor => ({
     type: actionTypes.INVESTOR_ADD,
     payload: investor
@@ -25,10 +21,6 @@ export const addInvestor = investor => ({
 
 export const newInvestorFlag = () => ({
     type: actionTypes.INVESTOR_NEW_FLAG
-});
-
-export const newInvestorFlagCancle = () => ({
-    type: actionTypes.MINER_NEW_FLAG_CANCEL
 });
 
 export const resetInvestors = investors => ({
@@ -44,4 +36,9 @@ export const addTransaction = transaction => ({
 export const delTransaction = hash => ({
     type: actionTypes.TRANSACTION_DEL,
     payload: hash
+});
+
+export const delTransactionBatch = hashes => ({
+    type: actionTypes.TRANSACTION_DEL_BATCH,
+    payload: hashes
 });

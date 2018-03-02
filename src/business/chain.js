@@ -17,7 +17,7 @@ class Chain {
             this.blocks = [];
             const block = new Block(kamiSama, [new Transaction(
                 undefined, kamiSama, initReward,
-                'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks')]);
+                'Genesis Block: The Times 03/Jan/2009 Chancellor on brink of second bailout for banks')]);
             while (!this.validDiffculty(block)) {
                 block.calcHash();
             }

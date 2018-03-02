@@ -133,12 +133,10 @@ class Exchange {
             this.calculateBalanceInChain();
             this.calculateTotalBtc();
             this.printInfo();
-            block.transacs.forEach(transac => {
-                if (transac.hash) {
-                    transac.hash |> App.actions.delTransaction |> this.store.dispatch;
-                    delete this.transactions[transac.hash];
-                }
-            });
+            block.transacs.map(transac => {
+                delete this.transactions[transac.hash];
+                return transac.hash;
+            }) |> App.actions.delTransactionBatch |> this.store.dispatch;
             this.calculateBalanceOutChain();
             block = { ...block };
             block |> App.actions.addBlock |> this.store.dispatch;

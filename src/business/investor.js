@@ -1,7 +1,7 @@
 class Investor {
-    constructor(id) {
-        this.id = `investor-${id}`;
-        this.balance = 0;
+    constructor(id, balance = 0) {
+        this.id = id;
+        this.balance = balance;
     }
 
     receiveBtc(value) {
@@ -10,6 +10,13 @@ class Investor {
 
     spendBtc(value) {
         this.balance -= value;
+    }
+
+    /**
+     * return a new vanilla object(no Investor.prototype functions)
+     */
+    toVanillaObj() {
+        return { ...this };
     }
 
     /**

@@ -1,3 +1,4 @@
+import store from 'store';
 import Miner from 'business/miner';
 import Investor from 'business/investor';
 import exchange from 'business/exchange';
@@ -6,24 +7,29 @@ if (!global.Worker) {
     throw new TypeError('Please update your browser to support Web Worker');
 }
 
-let id = 0;
+let id = 1;
 
 /**
  * Contactor act like network in real world
  */
 class Contactor {
-    constructor(exchange) {
+    constructor() { }
+
+    registerExchange(exchange) {
         this.exchange = exchange;
     }
 
     /**
-     * oops! a new miner poped up in the network all of a sudden
+     * oops! a new miner poped up in the network all of a sudden,
+     * new miner must be registered before new investor, otherwise there will
+     * be a infinite call loop
      */
     popupMiner() {
         const investor = this.popupInvestor(id);
-        const miner = new Miner(id++, investor, exchange.chain);
+        const miner = new Miner(`miner-${id++}`, investor, exchange.chain);
         this.exchange.registerMiner(miner);
         miner.registerExchange(this.exchange);
+        this.exchange.registerInvestor(investor);
         Object.keys(this.exchange.miners).forEach(k => {
             const m = this.exchange.miners[k];
             miner.acquaint(m);
@@ -37,6 +43,7 @@ class Contactor {
      * @param {Number} _id ${id} if not given
      */
     popupInvestor(_id) {
+        const isMiner = _id !== undefined;
         _id = do {
             if (_id === undefined) {
                 id++;
@@ -44,8 +51,10 @@ class Contactor {
                 _id;
             }
         };
-        const investor = new Investor(_id);
-        this.exchange.registerInvestor(investor);
+        const investor = new Investor(`investor-${_id}`);
+        if (!isMiner) {
+            this.exchange.registerInvestor(investor);
+        }
         return investor;
     }
 
@@ -62,21 +71,19 @@ class Contactor {
     getInvestorLen() {
         return this.exchange.getInvestorLen();
     }
-
-    /**
-     * start demostrating
-     */
-    startDemostrating() {
-        for (let i = 0; i < 2; i++) {
-            this.popupMiner();
-        }
-        for (let i = 0; i < 0; i++) {
-            this.popupMiner();
-        }
-    }
 }
 
-const contactor = new Contactor(exchange);
-contactor.startDemostrating();
+const contactor = new Contactor();
+contactor.registerExchange(exchange);
+
+store.subscribe(() => {
+    const { newMinerFlag, newInvestorFlag } = store.getState();
+    if (newMinerFlag) {
+        contactor.popupMiner();
+    }
+    if (newInvestorFlag) {
+        contactor.popupInvestor();
+    }
+});
 
 export default contactor;

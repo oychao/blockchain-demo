@@ -1,6 +1,8 @@
 import Block from 'business/block';
 import Transaction from 'business/transaction';
 
+const kamiSama = 'Nakamoto Satoshi';
+
 const difficulty = 3;
 
 const initReward = 50;
@@ -13,8 +15,8 @@ class Chain {
             this.blocks = blocks;
         } else {
             this.blocks = [];
-            const block = new Block('Genesis Block', [new Transaction(
-                undefined, '1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', initReward,
+            const block = new Block(kamiSama, [new Transaction(
+                undefined, kamiSama, initReward,
                 'The Times 03/Jan/2009 Chancellor on brink of second bailout for banks')]);
             while (!this.validDiffculty(block)) {
                 block.calcHash();
@@ -71,6 +73,7 @@ class Chain {
 
 Chain.initReward = initReward;
 Chain.binThreshold = binThreshold;
-Chain.transSize = 10;
+Chain.transSize = transSize;
+Chain.kamiSama = kamiSama;
 
 export default Chain;

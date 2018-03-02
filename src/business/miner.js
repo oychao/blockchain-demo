@@ -8,8 +8,7 @@ import inherit from 'utils/inherit';
 class Miner extends Participant {
     constructor(id, investor, chain) {
         super(id, new Worker());
-        this.investor = new Investor(id);
-        this.id = `miner-${id}`;
+        this.id = id;
 
         this.pWorker.postMessage({
             type: 'init',
@@ -115,6 +114,18 @@ class Miner extends Participant {
         });
     }
 
+    /**
+     * return a new vanilla object(no Miner.prototype functions), only necessary info 
+     */
+    toVanillaObj() {
+        const { id } = this;
+        return { id };
+    }
+
+    /**
+     * print out a block info
+     * @param {Block} block 
+     */
     printBlock(block) {
         console.log(`${this.id.toUpperCase()}:`);
         console.log(block.toString());

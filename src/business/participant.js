@@ -1,3 +1,5 @@
+import PromiseWorker from 'promise-worker-bi';
+
 class Participant {
     constructor(id, worker) {
         if (Participant === this.constructor) {
@@ -7,7 +9,8 @@ class Participant {
             throw new Error('Worker not given');
         }
         this._id = id;
-        this.worker = worker;
+        this.pWorker = new PromiseWorker(worker);
+        this.pWorker.register(action => this[action.type](action.payload));
     }
 }
 

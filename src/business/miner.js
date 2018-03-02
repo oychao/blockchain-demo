@@ -1,4 +1,5 @@
 import Participant from 'business/participant';
+import Chain from 'business/chain';
 import Worker from 'business/miner.worker';
 import Investor from 'business/investor';
 import Block from 'business/block';
@@ -7,50 +8,45 @@ import inherit from 'utils/inherit';
 class Miner extends Participant {
     constructor(id, investor, chain) {
         super(id, new Worker());
-        this.investor = new Investor(id);
-        this.id = `miner-${id}`;
+        this.id = id;
 
-        this.worker.onmessage = e => {
-            this[e.data.type](e.data.payload);
-        };
-        this.worker.postMessage({
+        this.pWorker.postMessage({
             type: 'init',
             payload: { chain, id: this.id, investorId: investor.id }
         });
-        this.worker.postMessage({
+        this.pWorker.postMessage({
             type: 'startMining'
         });
 
         this.peers = [];
-        this.refreshing = false;
-        this.peerQueries = {};
-        this.transactions = [];
     }
 
     /**
-     * register a pool for getting transactions
-     * @param {Pool} pool 
+     * register a exchange for getting transactions
+     * @param {Exchange} exchange 
      */
-    registerPool(pool) {
-        this.pool = pool;
+    registerExchange(exchange) {
+        this.exchange = exchange;
     }
 
+    /**
+     * broadcast a new block to all miners
+     * @param {Block} block 
+     */
     broadcast(block) {
         inherit(block, Block);
-        console.log(block.toString());
-        this.pool.receiveBlock(block);
+        this.printBlock(block);
+        this.exchange.receiveBlock(block);
         this.peers.forEach(m => {
             m.receive(block);
         });
+        return this.exchange.getTransactions(Chain.transSize);
     }
 
-    receive(block) {
-        this.worker.postMessage({
-            type: 'receiveBlock',
-            payload: block
-        });
-    }
-
+    /**
+     * store a miner for contacting
+     * @param {Miner} miner 
+     */
     acquaint(miner) {
         if (miner === this) {
             return;
@@ -60,44 +56,70 @@ class Miner extends Participant {
         }
     }
 
-    queryPeer() {
-        const randPeer = this.peers[Math.floor(Math.random() * this.peers.length)];
-        if (!randPeer) {
+    /**
+     * receive a new block from other miner
+     * @param {Block} block 
+     */
+    receive(block) {
+        this.pWorker.postMessage({
+            type: 'receiveBlock',
+            payload: { block, transacs: this.exchange.getTransactions(Chain.transSize) }
+        }).catch(err => {
+            this.queryPeer(block.miner);
+            throw err;
+        });
+    }
+
+    /**
+     * blocks in  the are outdate, query other miner for refreshing chain
+     * @param {String} minerId if given, query specific miner, otherwise query a random one
+     */
+    queryPeer(minerId) {
+        let peer = this.peers[Math.floor(Math.random() * this.peers.length)];
+        if (minerId) {
+            peer = this.peers.find(p => p.id === minerId) || peer;
+        }
+        if (!peer) {
             throw new Error('No valid miner');
         }
-        randPeer.queryBlocks(this.id, blocks => {
-            this.worker.postMessage({
+        peer.queryBlocks(this.id).then(blocks => {
+            this.pWorker.postMessage({
                 type: 'receiveBlocks',
-                payload: blocks
+                payload: { blocks, transacs: this.exchange.getTransactions(Chain.transSize) }
             });
         });
     }
 
-    queryBlocks(minerId, callback) {
-        this.peerQueries[minerId] = callback;
-        this.worker.postMessage({
+    /**
+     * queried by someone whose chain is outdate for refreshing their chain,
+     * return a promise
+     * @param {String} minerId 
+     */
+    queryBlocks(minerId) {
+        return this.pWorker.postMessage({
             type: 'queryBlocks',
             payload: minerId
-        });
-    }
-
-    getBlocks({ minerId, blocks }) {
-        try {
-            this.peerQueries[minerId].call(null, blocks);
-            delete this.peerQueries[minerId];
-        } catch (e) {
-            throw e;
-        }
+        })
     }
 
     /**
      * return new transactions to digger
      */
-    queryTransactions(num) {
+    queryTransactions() {
         this.worker.postMessage({
             type: 'receiveTransactions',
-            payload: this.pool.getTransactions(num)
+            payload: this.exchange.getTransactions(Chain.transSize)
         });
+    }
+
+    /**
+     * print out a block info
+     * @param {Block} block 
+     */
+    printBlock(block) {
+        console.log(`${this.id.toUpperCase()}:`);
+        console.log(block.toString());
+        // console.log(block.miner, block.index);
     }
 }
 

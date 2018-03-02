@@ -5,18 +5,23 @@
   "license": "WTFPL",
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server"
+    "start": "webpack-dev-server",
+    "lint": "eslint ."
   },
   "devDependencies": {
-    "@babel/core": "^7.0.0-beta.39",
-    "@babel/plugin-transform-react-jsx": "^7.0.0-beta.39",
-    "@babel/polyfill": "^7.0.0-beta.39",
-    "@babel/preset-env": "^7.0.0-beta.39",
-    "@babel/preset-stage-0": "^7.0.0-beta.39",
-    "@babel/register": "^7.0.0-beta.39",
+    "@babel/core": "^7.0.0-beta.40",
+    "@babel/plugin-transform-react-jsx": "^7.0.0-beta.40",
+    "@babel/polyfill": "^7.0.0-beta.40",
+    "@babel/preset-env": "^7.0.0-beta.40",
+    "@babel/preset-stage-0": "^7.0.0-beta.40",
+    "@babel/register": "^7.0.0-beta.40",
+    "babel-eslint": "^8.2.2",
     "babel-loader": "8.0.0-beta.0",
+    "babel-plugin-react": "^1.0.0",
     "clean-webpack-plugin": "^0.1.18",
-    "css-loader": "^0.28.9",
+    "css-loader": "^0.28.10",
+    "eslint": "^4.18.1",
+    "eslint-plugin-react": "^7.7.0",
     "html-webpack-plugin": "^2.30.1",
     "react-hot-loader": "^4.0.0-beta.22",
     "script-ext-html-webpack-plugin": "^1.8.8",
@@ -26,7 +31,10 @@
     "worker-loader": "^1.1.0"
   },
   "dependencies": {
+    "promise-worker-bi": "^2.2.1",
     "react": "^16.2.0",
-    "react-dom": "^16.2.0"
+    "react-dom": "^16.2.0",
+    "react-redux": "^5.0.7",
+    "redux": "^3.7.2"
   }
 }

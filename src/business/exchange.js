@@ -1,43 +1,35 @@
-import crypto from 'crypto';
-
 import store from 'store';
 import Chain from 'business/chain';
-
-const crypter = crypto.createHash('sha256');
-
-/**
- * generate a random index number less than ${upperLimit}
- * @param {Number} upperLimit 
- */
-const randomIdx = upperLimit => Math.floor(Math.random() * Math.round(upperLimit));
+import Investor from 'business/investor';
+import Transaction from "business/transaction";
+import { randomIdx, randomBtc } from 'utils/random';
+import App from 'containers/App';
 
 /**
- * generate a random decimal number less than half of ${upperLimit},
- * accurate to 2 decimal places
- * @param {Number} upperLimit 
+ * exchange, transactions generated here
  */
-const randomBtc = upperLimit => +((Math.random() * upperLimit).toFixed(2)) / 2;
-
-/**
- * mine pool, transactions generated here
- */
-class Pool {
-    constructor() {
+class Exchange {
+    constructor(store) {
         this.transactions = {};
         this.miners = {};
         this.investors = {};
         this.investorCount = 0;
-        this.chain = store.chain;
-        this.generateTransaction();
-        this.calculateBalance = this.calculateBalance.bind(this)
+        this.chain = new Chain();
+        this.startDealing();
+        this.calculateBalance = :: this.calculateBalance;
+        this.totalBtc = Chain.initReward;
+
+        this.store = store;
+        const block = { ...this.chain.lastBlock() };
+        block |> App.actions.addBlock |> this.store.dispatch;
     }
 
     /**
      * start generating transaction randomly
      */
-    generateTransaction() {
+    startDealing() {
         if (!this.timer) {
-            // generate a transaction every 0.1 second,
+            // generate a transaction every 0.5 second,
             // if investor less than 1 or random seller's balance is 0
             // or random seller and random buy are same investor,
             // skip and continue
@@ -59,9 +51,11 @@ class Pool {
                 // tell investors that their balances have been Fchanged fo preventing double spend
                 fromInvestor.spendBtc(value);
                 toInvestor.receiveBtc(value);
-                const hash = crypter.update(fromInvestor.id + toInvestor.id + value).digest('hex');
-                this.transactions[hash] = { hash, value, from: fromInvestor.id, to: toInvestor.id };
-            }, 1.5e3);
+                let transac = new Transaction(fromInvestor.id, toInvestor.id, value);
+                this.transactions[transac.hash] = transac;
+                transac = { ...transac };
+                transac |> App.actions.addTransaction |> this.store.dispatch;
+            }, 5e2);
         }
     }
 
@@ -72,7 +66,7 @@ class Pool {
     /**
      * stop generating transactions
      */
-    stop() {
+    stopDealing() {
         if (this.timer) {
             clearInterval(this.timer);
             delete this.timer;
@@ -85,6 +79,8 @@ class Pool {
      */
     calculateBalanceInChain() {
         this.chain.iterTrans(this.calculateBalance);
+        const { investors } = this;
+        Object.values(investors).map(inv => ({ ...inv })) |> App.actions.resetInvestors |> this.store.dispatch;
     }
 
     /**
@@ -93,8 +89,17 @@ class Pool {
      * being invoked
      */
     calculateBalanceOutChain() {
-        const { transactions } = this;
-        Object.keys(transactions).map(k => transactions[k]).forEach(this.calculateBalance);
+        Object.values(this.transactions).forEach(this.calculateBalance);
+    }
+
+    /**
+     * calculate all BTC in the network
+     */
+    calculateTotalBtc() {
+        this.totalBtc = Object.values(this.investors).reduce(
+            (acc, investor) => acc + investor.balance,
+            Chain.initReward
+        );
     }
 
     /**
@@ -117,42 +122,55 @@ class Pool {
     }
 
     /**
-     * receive a new block, if valid then refresh balances for all investors
+     * receive a new block, if valid then refresh balances for all investors,
+     * if conflict happens, query for latest blocks and refresh the chain
      * @param {Block} block 
      */
     receiveBlock(block) {
         try {
-            Object.keys(this.investors).forEach(k => void this.investors[k].resetBtc());
+            Object.values(this.investors).forEach(investor => void investor.resetBtc());
             this.chain.accept(block);
             this.calculateBalanceInChain();
-            Object.keys(this.investors).forEach(k => void console.log(this.investors[k]));
-            console.log(this.getTransactions().length);
-            block.transacs.forEach(transac => {
-                if (transac.hash) {
-                    delete this.transactions[transac.hash];
-                }
-            });
+            this.calculateTotalBtc();
+            this.printInfo();
+            block.transacs.map(transac => {
+                delete this.transactions[transac.hash];
+                return transac.hash;
+            }) |> App.actions.delTransactionBatch |> this.store.dispatch;
             this.calculateBalanceOutChain();
+            block = { ...block };
+            block |> App.actions.addBlock |> this.store.dispatch;
         } catch (e) {
-            throw e;
+            const { miners } = this;
+            const minerArr = Object.values(miners);
+            let miner = miners[block.miner] || minerArr[randomIdx(minerArr.length)];
+            this.stopDealing();
+            miner.queryBlocks('exchange', blocks => {
+                this.chain.blocks = blocks;
+                this.startDealing();
+            });
+            throw new Error(`${e.message}, block received from ${block.miner}`);
         }
     }
 
     /**
-     * register a new miner into pool
+     * register a new miner into exchange
      * @param {Miner} miner 
      */
     registerMiner(miner) {
+        miner.id |> App.actions.addMiner |> this.store.dispatch;
         this.miners[miner.id] = miner;
     }
 
     /**
-     * register a new investor into pool
+     * register a new investor into exchange
      * @param {Investor} investor 
      */
     registerInvestor(investor) {
         this.investorCount++;
         this.investors[investor.id] = investor;
+        investor = { ...investor };
+        investor |> App.actions.addInvestor |> this.store.dispatch;
     }
 
     /**
@@ -160,8 +178,7 @@ class Pool {
      * @param {Number} num if not given, return all transactions
      */
     getTransactions(num) {
-        const ks = Object.keys(this.transactions);
-        const transacs = ks.map(k => this.transactions[k]);
+        const transacs = Object.values(this.transactions);
         if (!num) {
             return transacs;
         } else {
@@ -170,20 +187,30 @@ class Pool {
     }
 
     /**
-     * get miner count in the pool
+     * get miner count in the exchange
      */
     getMinerLen() {
         return Object.keys(this.miners).length;
     }
 
     /**
-     * get investor count in the pool
+     * get investor count in the exchange
      */
     getInvestorLen() {
         return Object.keys(this.investors).length;
     }
+
+    /**
+     * print all exchange info to console
+     */
+    printInfo() {
+        // console.log('EXCHANGE: investor list:');
+        Object.values(this.investors).forEach(investor => void console.log(investor));
+        console.log(`EXCHANGE: chain length: ${this.chain.lastBlock().index}, total BTC: ${this.totalBtc}`);
+    }
 }
 
-const pool = new Pool();
+const exchange = new Exchange(store);
+exchange.registerInvestor(new Investor(Chain.kamiSama, 50));
 
-export default pool;
+export default exchange;

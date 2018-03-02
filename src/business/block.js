@@ -1,6 +1,4 @@
-import crypto from 'crypto';
-
-const crypter = crypto.createHash("sha256");
+import crypter from 'utils/crypter';
 
 class Block {
     constructor(minerId, transacs = [], prevBlock = {
@@ -27,7 +25,7 @@ class Block {
 
     getCyphertext() {
         let cyphertext = `${this.index}${this.prevHash}${this.timestamp}${this.nonce}`;
-        this.transacs.forEach(trans => cyphertext += trans.from || trans.coinbase + trans.to + trans.value);
+        this.transacs.forEach(trans => cyphertext += trans.hash);
         return crypter.update(cyphertext).digest('hex');
     }
 

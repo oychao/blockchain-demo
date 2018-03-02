@@ -1,7 +1,10 @@
+import { createStore, compose } from 'redux';
+
 import Chain from 'business/chain';
+import App from 'containers/App';
 
-const store = {};
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-store.chain = new Chain();
+const store = createStore(App.reducer, composeEnhancers());
 
 export default store;

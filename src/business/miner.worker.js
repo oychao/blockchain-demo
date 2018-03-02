@@ -1,8 +1,11 @@
+import PromiseWorker from 'promise-worker-bi';
+
 import Chain from 'business/chain';
 import Block from 'business/block';
+import Transaction from 'business/transaction';
 import inherit from 'utils/inherit';
 
-const transSize = 10;
+const pWorker = new PromiseWorker();
 
 class Digger {
     constructor() {
@@ -15,62 +18,62 @@ class Digger {
         this.chain = Reflect.construct(Chain, [blocks]);
     }
 
+    /**
+     * start mining
+     */
     startMining() {
         this.block = new Block(this.id, this.getTransactions(), this.chain.lastBlock());
-        this.timer = setInterval(() => {
-            if (this.chain.isValidBlock(this.block)) {
-                this.chain.accept(this.block);
-                this.broadcast(this.block);
-                postMessage({
-                    type: 'queryTransactions',
-                    payload: transSize
-                });
-                this.stopMining();
-            } else {
-                this.block.calcHash(this.chain.lastBlock());
-            }
-        }, 1);
+        if (!this.timer) {
+            this.timer = setInterval(() => {
+                try {
+                    if (this.chain.isValidBlock(this.block)) {
+                        this.chain.accept(this.block);
+                        this.broadcast(this.block);
+                    } else {
+                        this.block.calcHash(this.chain.lastBlock());
+                    }
+                } catch (e) {
+                    this.stopMining();
+                }
+            }, 1);
+        }
     }
 
-    getTransactions() {
-        const ks = Object.keys(this.transactions);
-        return [{
-            to: this.investorId,
-            value: Chain.initReward * (.5 ** Math.floor((this.chain.lastBlock().index + 1) / Chain.binThreshold))
-        }].concat(ks.map(k => this.transactions[k]));
-    }
-
+    /**
+     * stop mining, reset all transactions, delete working block, and clear mining timer
+     */
     stopMining() {
         this.transactions = {};
-        delete this.block;
         clearInterval(this.timer);
+        delete this.block;
+        delete this.timer;
     }
 
     /**
      * received a block from other miners, if the block is legal,
      * reset nonce and delete all transactions in order to prevent
      * transaction rewriting, then query miner for new transactions
-     * @param {Block} block 
+     * @param {Object} param0 
      */
-    receiveBlock(block) {
+    receiveBlock({ block, transacs }) {
         try {
-            this.chain.accept(block);
-        } catch (e) {
-            postMessage({
-                type: 'queryPeer'
-            });
-            throw new Error(`${this.id} ${e.message}`);
-        } finally {
-            postMessage({
-                type: 'queryTransactions',
-                payload: transSize
-            });
             this.stopMining();
+            this.chain.accept(block);
+            this.receiveTransactions(transacs);
+        } catch (e) {
+            this.stopMining();
+            throw new Error(`${this.id} ${e.message}, block index: ${this.chain.lastBlock().index}, received block from ${block.miner}`);
         }
     }
 
-    receiveBlocks(blocks) {
+    /**
+     * receive blocks from miner, set latest blocks into the chain,
+     * and query miner for latest transactions
+     * @param {Object} param0 
+     */
+    receiveBlocks({ blocks, transacs }) {
         this.chain.blocks = blocks;
+        this.receiveTransactions(transacs);
     }
 
     /**
@@ -82,24 +85,36 @@ class Digger {
         this.startMining();
     }
 
-    queryBlocks(minerId) {
-        postMessage({
-            type: 'getBlocks',
-            payload: {
-                minerId,
-                blocks: this.chain.blocks
-            }
-        });
+    /**
+     * return transactions, the first one is always coinbase transaction
+     */
+    getTransactions() {
+        const ks = Object.keys(this.transactions);
+        return [new Transaction(undefined, this.investorId,
+            Chain.initReward * (.5 ** Math.floor((this.chain.lastBlock().index + 1) / Chain.binThreshold))
+        )].concat(ks.map(k => this.transactions[k]));
     }
 
+    /**
+     * return blocks in the chain when miner queried
+     */
+    queryBlocks() {
+        return this.chain.blocks;
+    }
+
+    /**
+     * send a new block to miner
+     * @param {Block} block 
+     */
     broadcast(block) {
-        postMessage({
+        this.stopMining();
+        pWorker.postMessage({
             type: 'broadcast',
             payload: block
-        });
+        }).then(transacs => this.receiveTransactions(transacs));
     }
 }
 
 const digger = new Digger();
 
-onmessage = e => void digger[e.data.type](e.data.payload);
+pWorker.register(action => digger[action.type](action.payload));

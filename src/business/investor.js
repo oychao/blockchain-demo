@@ -1,7 +1,7 @@
 class Investor {
-    constructor(id) {
-        this.id = `investor-${id}`;
-        this.balance = 0;
+    constructor(id, balance = 0) {
+        this.id = id;
+        this.balance = balance;
     }
 
     receiveBtc(value) {

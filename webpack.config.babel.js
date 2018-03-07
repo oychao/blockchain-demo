@@ -11,6 +11,12 @@ module.exports = {
         path: path.resolve('dist'),
         filename: 'bundle.js'
     },
+    externals: {
+        'react': 'React',
+        'react-dom': 'ReactDOM',
+        'redux': 'Redux',
+        'react-redux': 'ReactRedux'
+    },
     resolve: {
         modules: [
             path.resolve('./src'),
@@ -32,7 +38,7 @@ module.exports = {
             use: ['worker-loader']
         }]
     },
-    devtool: 'inline-source-map',
+    devtool: 'eval-source-map',
     devServer: {
         contentBase: './dist',
         hot: true,

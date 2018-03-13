@@ -1,9 +1,53 @@
 #app {
     overflow: hidden;
     height: 100%;
-    background-color: blueviolet;
+    background-color: gold;
     color: aliceblue;
+    display: grid;
+    grid-template-rows: 50px 1fr;
+    grid-template-columns: 150px 1fr;
+    grid-template-areas: "header header" "nav main";
+    grid-gap: 10px;
 }
-#app button {
-    font-size: 1.1em;
+#app>header {
+    grid-area: header;
+    background-color: purple;
+    display: flex;
+    overflow: hidden;
+}
+#app>header>h1 {
+    flex: 1 1 0px;
+    line-height: 50px;
+    margin: 0px;
+    margin-left: 20px;
+}
+#app>header>ul {
+    flex: 3 1 0px;
+    margin-top:20px;
+}
+#app>header>ul>li {
+    list-style-type: none;
+    float: left;
+    margin: 0px 10px;
+}
+#app>nav {
+    cursor: default;
+    grid-area: nav;
+    background-color: grey;
+    user-select: none;
+}
+#app>nav>a {
+    margin-top: 10px;
+    display: block;
+    cursor: pointer;
+    color: yellow;
+    height: 2rem;
+    line-height: 2rem;
+}
+#app>nav>a:hover {
+    background-color: peru;
+}
+#app>main {
+    grid-area: main;
+    background-color: grey;
 }

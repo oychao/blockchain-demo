@@ -3,8 +3,9 @@ import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 
 import * as actions from './actions';
-
 import './style.css';
+
+import Block from '../Block';
 
 class App extends React.Component {
     constructor(props) {
@@ -25,19 +26,23 @@ class App extends React.Component {
         const { blocks, miners, investors, totalBtc, transactions } = this.props;
         return (
             <div id="app">
-                <h1>A BlockChain Demo</h1>
-                <p>Check the console and redux dev tools</p>
-                <hr />
-                <button onClick={this.handleNewMiner}>Add Miner(5 at most)</button><br />
-                <button onClick={this.handleNewInvestor}>Add Investor(10 at most)</button>
-                <hr />
-                <p>
-                    block count: <strong>{blocks.length}</strong><br />
-                    miner count: <strong>{miners.length}</strong><br />
-                    investors count: <strong>{investors.length}</strong><br />
-                    total BTC: <strong>{totalBtc}</strong><br />
-                    transactions count in exchange: <strong>{Object.keys(transactions).length}</strong>
-                </p>
+                <header>
+                    <h1>A BlockChain Demo</h1>
+                    <ul>
+                        <li>block count: <strong>{blocks.length}</strong></li>
+                        <li>miner count(5 at most): <strong>{miners.length}</strong></li>
+                        <li>investors count(10 at most): <strong>{investors.length}</strong></li>
+                        <li>total BTC: <strong>{totalBtc}</strong></li>
+                        <li>transactions count in exchange: <strong>{Object.keys(transactions).length}</strong></li>
+                    </ul>
+                </header>
+                <nav>
+                    <a onClick={this.handleNewMiner}>Add Miner</a>
+                    <a onClick={this.handleNewInvestor}>Add Investor</a>
+                </nav>
+                <main>
+                    {blocks.map(block => <Block.view {...block} key={block.hash} />)}
+                </main>
             </div>
         );
     }

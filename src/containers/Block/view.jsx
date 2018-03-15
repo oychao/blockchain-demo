@@ -20,7 +20,7 @@ class Block extends React.PureComponent {
         return (
             <div className="block">
                 <ul>
-                    <li>{index} - {hash}</li>
+                    <li>{index} - {hash.slice(0, 20)}</li>
                     <li>
                         <a href="javascript:;" onClick={this.toggleDetails}> {show ? 'Hide' : 'Show'} Details</a>
                     </li>

@@ -50,4 +50,31 @@
 #app>main {
     grid-area: main;
     background-color: grey;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-areas: "miner-list    miner-details    blockchain-info  block-details"
+                         "investor-list investor-details transaction-list block-details";
+    grid-gap: 3px;
+}
+#app>main>.minerlist {
+    grid-area: miner-list;
+}
+#app>main>.miner-details {
+    grid-area: miner-details;
+}
+#app>main>.investor-list {
+    grid-area: investor-list;
+}
+#app>main>.investor-details {
+    grid-area: investor-details;
+}
+#app>main>.transaction-list {
+    grid-area: transaction-list;
+}
+#app>main>.blockchain-info {
+    grid-area: blockchain-info;
+}
+#app>main>.block-details {
+    grid-area: block-details;
 }

@@ -41,7 +41,15 @@ class App extends React.Component {
                     <a onClick={this.handleNewInvestor}>Add Investor</a>
                 </nav>
                 <main>
-                    {blocks.map(block => <Block.view {...block} key={block.hash} />)}
+                    <div className="miner-list"></div>
+                    <div className="miner-details"></div>
+                    <div className="investor-list"></div>
+                    <div className="investor-details"></div>
+                    <div className="transaction-list"></div>
+                    <div className="blockchain-info">
+                        {blocks.map(block => <Block.view {...block} key={block.hash} />)}
+                    </div>
+                    <div className="block-details"></div>
                 </main>
             </div>
         );

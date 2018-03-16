@@ -33,9 +33,6 @@
 #app>div>div>h3 {
     text-align: center;
 }
-#app>div>div>ul {
-    padding-left: 15px;
-}
 #app>.minerlist {
     grid-area: miner-list;
 }
@@ -58,6 +55,9 @@
     grid-area: block-details;
 }
 
+ul.odd-even-list {
+    padding-left: 15px;
+}
 ul.odd-even-list>li {
     cursor: pointer;
 }

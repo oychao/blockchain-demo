@@ -1,14 +1,10 @@
 .navigator {
     user-select: none;
 }
-.navigator>a {
+.navigator>.odd-even-list {
     margin-top: 10px;
     display: block;
     cursor: pointer;
-    color: gold;
     height: 2rem;
     line-height: 2rem;
-}
-.navigator>a:hover {
-    background-color: peru;
 }

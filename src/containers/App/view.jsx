@@ -5,15 +5,15 @@ import { hot } from 'react-hot-loader';
 import * as actions from './actions';
 import './style.css';
 
-import Dashboard from '../Dashboard';
-import Navigator from '../Navigator';
-import Blockchain from '../Blockchain';
-import BlockDetails from '../BlockDetails';
-import MinerList from '../MinerList';
-import MinerDetails from '../MinerDetails';
-import InvestorList from '../InvestorList';
-import InvestorDetails from '../InvestorDetails';
-import Transactions from '../Transactions';
+import Dashboard from 'containers/business/Dashboard';
+import Navigator from 'containers/business/Navigator';
+import Blockchain from 'containers/business/Blockchain';
+import BlockDetails from 'containers/business/BlockDetails';
+import MinerList from 'containers/business/MinerList';
+import MinerDetails from 'containers/business/MinerDetails';
+import InvestorList from 'containers/business/InvestorList';
+import InvestorDetails from 'containers/business/InvestorDetails';
+import Transactions from 'containers/business/Transactions';
 
 class App extends React.Component {
     constructor(props) {

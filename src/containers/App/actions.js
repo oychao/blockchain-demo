@@ -7,7 +7,7 @@ export const addBlock = block => ({
 
 export const addMiner = miner => ({
     type: actionTypes.MINER_ADD,
-    payload: miner
+    payload: { id: miner }
 });
 
 export const newMinerFlag = () => ({

@@ -4,7 +4,7 @@
     background-color: gold;
     color: aliceblue;
     display: grid;
-    grid-template-rows: 50px 1fr;
+    grid-template-rows: 70px 1fr;
     grid-template-columns: 150px 1fr;
     grid-template-areas: "header header" "nav main";
     grid-gap: 10px;
@@ -50,12 +50,28 @@
 #app>main {
     grid-area: main;
     background-color: grey;
+}
+#app>main {
+    height: 100%;
     display: grid;
-    grid-template-rows: 1fr 1fr;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-areas: "miner-list    miner-details    blockchain-info  block-details"
-                         "investor-list investor-details transaction-list block-details";
+    grid-template-rows: repeat(2, minmax(100px, 1fr));
+    grid-template-columns: repeat(4, minmax(100px, 1fr));
+    grid-template-areas: "miner-list    miner-details    blockchain-info transaction-list"
+                         "investor-list investor-details block-details   transaction-list";
     grid-gap: 3px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+#app>main>div>div {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+}
+#app>main {
+    background-color: gold;
+}
+#app>main>div {
+    background-color: grey;
 }
 #app>main>.minerlist {
     grid-area: miner-list;

@@ -5,7 +5,13 @@ import { hot } from 'react-hot-loader';
 import * as actions from './actions';
 import './style.css';
 
-import Block from '../Block';
+import Blockchain from '../Blockchain';
+import BlockDetails from '../BlockDetails';
+import MinerList from '../MinerList';
+import MinerDetails from '../MinerDetails';
+import InvestorList from '../InvestorList';
+import InvestorDetails from '../InvestorDetails';
+import Transactions from '../Transactions';
 
 class App extends React.Component {
     constructor(props) {
@@ -41,17 +47,29 @@ class App extends React.Component {
                     <a onClick={this.handleNewInvestor}>Add Investor</a>
                 </nav>
                 <main>
-                    <div className="miner-list"></div>
-                    <div className="miner-details"></div>
-                    <div className="investor-list"></div>
-                    <div className="investor-details"></div>
-                    <div className="transaction-list"></div>
-                    <div className="blockchain-info">
-                        {blocks.map(block => <Block.view {...block} key={block.hash} />)}
+                    <div className="miner-list">
+                        <MinerList.view miners={miners} />
                     </div>
-                    <div className="block-details"></div>
+                    <div className="miner-details">
+                        <MinerDetails.view />
+                    </div>
+                    <div className="investor-list">
+                        <InvestorList.view investors={investors} />
+                    </div>
+                    <div className="investor-details">
+                        <InvestorDetails.view />
+                    </div>
+                    <div className="transaction-list">
+                        <Transactions.view transactions={transactions} />
+                    </div>
+                    <div className="blockchain-info">
+                        <Blockchain.view blocks={blocks} />
+                    </div>
+                    <div className="block-details">
+                        <BlockDetails.view />
+                    </div>
                 </main>
-            </div>
+            </div >
         );
     }
 }

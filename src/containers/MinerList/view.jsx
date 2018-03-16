@@ -5,7 +5,7 @@ import './style.css';
 const MinerList = ({ miners }) => (
     <div className="miner-list">
         <h3>Miner List</h3>
-        <ul>
+        <ul className="odd-even-list">
             {miners.map(({ id }) =>
                 <li key={id}>{id}</li>
             )}

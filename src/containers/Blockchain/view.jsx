@@ -10,23 +10,29 @@ class Block extends React.PureComponent {
         };
         this.toggleDetails = :: this.toggleDetails;
     }
+
     toggleDetails() {
         this.setState({
             show: !this.state.show,
         });
     }
+
     render() {
         const { blocks } = this.props;
         return (
-            <div className="block">
+            <div ref={_ => void (this.container = _)} className="block">
                 <h3>Blockchain</h3>
-                <ul>
-                    {blocks.reverse().map(({ index, miner, nonce, hash, prevHash, transacs }) =>
+                <ul className="odd-even-list">
+                    {blocks.map(({ index, miner, nonce, hash, prevHash, transacs }) =>
                         <li key={hash}>{index} - {hash.slice(0, 30)}</li>
                     )}
                 </ul>
             </div>
         );
+    }
+
+    componentDidUpdate() {
+        this.container.scrollTop = this.container.scrollHeight;
     }
 }
 

@@ -5,6 +5,8 @@ import { hot } from 'react-hot-loader';
 import * as actions from './actions';
 import './style.css';
 
+import Dashboard from '../Dashboard';
+import Navigator from '../Navigator';
 import Blockchain from '../Blockchain';
 import BlockDetails from '../BlockDetails';
 import MinerList from '../MinerList';
@@ -30,21 +32,20 @@ class App extends React.Component {
 
     render() {
         const { blocks, miners, investors, totalBtc, transactions } = this.props;
+        const handlers = [{
+            name: 'Add Miner',
+            func: this.handleNewMiner
+        }, {
+            name: 'Add Investor',
+            func: this.handleNewInvestor
+        }];
         return (
             <div id="app">
                 <header>
-                    <h1>A BlockChain Demo</h1>
-                    <ul>
-                        <li>block count: <strong>{blocks.length}</strong></li>
-                        <li>miner count(5 at most): <strong>{miners.length}</strong></li>
-                        <li>investors count(10 at most): <strong>{investors.length}</strong></li>
-                        <li>total BTC: <strong>{totalBtc}</strong></li>
-                        <li>transactions count in exchange: <strong>{Object.keys(transactions).length}</strong></li>
-                    </ul>
+                    <Dashboard.view {...this.props} />
                 </header>
                 <nav>
-                    <a onClick={this.handleNewMiner}>Add Miner</a>
-                    <a onClick={this.handleNewInvestor}>Add Investor</a>
+                    <Navigator.view handlers={handlers} />
                 </nav>
                 <div className="miner-list">
                     <MinerList.view miners={miners} />

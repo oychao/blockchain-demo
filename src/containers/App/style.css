@@ -1,7 +1,7 @@
 #app {
     overflow: hidden;
     height: 100vh;
-    background-color: gold;
+    background-color: oldlace;
     color: aliceblue;
     display: grid;
     grid-template-rows: 70px repeat(2, minmax(100px, 1fr));
@@ -9,45 +9,19 @@
     grid-template-areas: "header header        header           header           header"
                          "nav    miner-list    miner-details    blockchain-info  block-details"
                          "nav    investor-list investor-details transaction-list block-details";
-    grid-gap: 4px;
+    grid-gap: 6px;
 }
 #app>header {
     grid-area: header;
     background-color: purple;
-    display: flex;
-    overflow: hidden;
-}
-#app>header>h1 {
-    flex: 1 1 0px;
-    line-height: 50px;
-    margin: 0px;
-    margin-left: 20px;
-}
-#app>header>ul {
-    flex: 3 1 0px;
-    margin-top:20px;
-}
-#app>header>ul>li {
-    list-style-type: none;
-    float: left;
-    margin: 0px 10px;
 }
 #app>nav {
     cursor: default;
     grid-area: nav;
     background-color: grey;
-    user-select: none;
 }
-#app>nav>a {
-    margin-top: 10px;
-    display: block;
-    cursor: pointer;
-    color: yellow;
-    height: 2rem;
-    line-height: 2rem;
-}
-#app>nav>a:hover {
-    background-color: peru;
+#app>div {
+    background-color: grey;
 }
 #app>div>div {
     height: 100%;
@@ -56,11 +30,11 @@
     overflow-wrap: break-word;
     word-break: break-all;
 }
-#app {
-    background-color: gold;
+#app>div>div>h3 {
+    text-align: center;
 }
-#app>div {
-    background-color: grey;
+#app>div>div>ul {
+    padding-left: 15px;
 }
 #app>.minerlist {
     grid-area: miner-list;
@@ -82,4 +56,17 @@
 }
 #app>.block-details {
     grid-area: block-details;
+}
+
+ul.odd-even-list>li {
+    cursor: pointer;
+}
+ul.odd-even-list>li:nth-child(2n - 1){
+    color: bisque;
+}
+ul.odd-even-list>li:nth-child(2n){
+    color: lightsteelblue;
+}
+ul.odd-even-list>li:hover, ul.odd-even-list>li.active {
+    color: rebeccapurple;
 }

@@ -21,7 +21,7 @@ class Block extends React.PureComponent {
             <div className="block">
                 <h3>Blockchain</h3>
                 <ul>
-                    {blocks.map(({ index, miner, nonce, hash, prevHash, transacs }) =>
+                    {blocks.reverse().map(({ index, miner, nonce, hash, prevHash, transacs }) =>
                         <li key={hash}>{index} - {hash.slice(0, 30)}</li>
                     )}
                 </ul>

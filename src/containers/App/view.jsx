@@ -46,29 +46,27 @@ class App extends React.Component {
                     <a onClick={this.handleNewMiner}>Add Miner</a>
                     <a onClick={this.handleNewInvestor}>Add Investor</a>
                 </nav>
-                <main>
-                    <div className="miner-list">
-                        <MinerList.view miners={miners} />
-                    </div>
-                    <div className="miner-details">
-                        <MinerDetails.view />
-                    </div>
-                    <div className="investor-list">
-                        <InvestorList.view investors={investors} />
-                    </div>
-                    <div className="investor-details">
-                        <InvestorDetails.view />
-                    </div>
-                    <div className="transaction-list">
-                        <Transactions.view transactions={transactions} />
-                    </div>
-                    <div className="blockchain-info">
-                        <Blockchain.view blocks={blocks} />
-                    </div>
-                    <div className="block-details">
-                        <BlockDetails.view />
-                    </div>
-                </main>
+                <div className="miner-list">
+                    <MinerList.view miners={miners} />
+                </div>
+                <div className="miner-details">
+                    <MinerDetails.view />
+                </div>
+                <div className="investor-list">
+                    <InvestorList.view investors={investors} />
+                </div>
+                <div className="investor-details">
+                    <InvestorDetails.view />
+                </div>
+                <div className="transaction-list">
+                    <Transactions.view transactions={transactions} />
+                </div>
+                <div className="blockchain-info">
+                    <Blockchain.view blocks={blocks} />
+                </div>
+                <div className="block-details">
+                    <BlockDetails.view />
+                </div>
             </div >
         );
     }

@@ -73,11 +73,11 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-    blocks: state.blocks,
-    miners: state.miners,
-    investors: state.investors,
+    blocks: state.blocks.slice(),
+    miners: state.miners.slice(),
+    investors: state.investors.slice(),
     totalBtc: state.totalBtc,
-    transactions: state.transactions
+    transactions: Object.assign({}, state.transactions)
 });
 const mapDispatchToProps = dispatch => ({
     handleNewMiner: () => dispatch(actions.newMinerFlag()),

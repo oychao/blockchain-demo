@@ -2,7 +2,7 @@ import React from 'react';
 
 import './style.css';
 
-import ListPanel from 'containers/hoc/ListPanel';
+import ListPanel from 'containers/utils/ListPanel';
 
 class Transactions extends React.PureComponent {
     constructor(props) {
@@ -12,7 +12,7 @@ class Transactions extends React.PureComponent {
     render() {
         const { transactions } = this.props;
         return (
-            <div ref={_ => void (this.container = _)} className="transactions" >
+            <div className="transactions">
                 <h3>Transactions in Exchange</h3>
                 <ListPanel.view>
                     <ul className="odd-even-list">
@@ -25,10 +25,6 @@ class Transactions extends React.PureComponent {
                 </ListPanel.view>
             </div>
         );
-    }
-
-    componentDidUpdate() {
-        this.container.scrollTop = this.container.scrollHeight;
     }
 }
 

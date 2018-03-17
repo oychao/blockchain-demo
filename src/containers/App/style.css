@@ -26,7 +26,7 @@
 #app>div>div {
     height: 100%;
     width: 100%;
-    overflow-y: auto;
+    overflow: hidden;
     overflow-wrap: break-word;
     word-break: break-all;
 }

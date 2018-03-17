@@ -1,0 +1,9 @@
+.list-panel {
+    height: calc(100% - 70px);
+    box-sizing: border-box;
+    background-color: black;
+    overflow-y: auto;
+    margin: 0px 15px;
+    padding: 10px;
+    border-radius: 8px;
+}

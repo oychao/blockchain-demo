@@ -2,6 +2,8 @@ import React from 'react';
 
 import './style.css';
 
+import ListPanel from 'containers/utils/ListPanel';
+
 class Block extends React.PureComponent {
     constructor(props) {
         super(props);
@@ -20,19 +22,17 @@ class Block extends React.PureComponent {
     render() {
         const { blocks } = this.props;
         return (
-            <div ref={_ => void (this.container = _)} className="block">
+            <div className="block">
                 <h3>Blockchain</h3>
-                <ul className="odd-even-list">
-                    {blocks.map(({ index, miner, nonce, hash, prevHash, transacs }) =>
-                        <li key={hash}>{index} - {hash.slice(0, 30)}</li>
-                    )}
-                </ul>
+                <ListPanel.view>
+                    <ul className="odd-even-list">
+                        {blocks.map(({ index, miner, nonce, hash, prevHash, transacs }) =>
+                            <li key={hash}>{index} - {hash.slice(0, 30)}</li>
+                        )}
+                    </ul>
+                </ListPanel.view>
             </div>
         );
-    }
-
-    componentDidUpdate() {
-        this.container.scrollTop = this.container.scrollHeight;
     }
 }
 

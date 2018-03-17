@@ -205,8 +205,8 @@ class Exchange {
      */
     printInfo() {
         // console.log('EXCHANGE: investor list:');
-        Object.values(this.investors).forEach(investor => void console.log(investor));
-        console.log(`EXCHANGE: chain length: ${this.chain.lastBlock().index}, total BTC: ${this.totalBtc}`);
+        // Object.values(this.investors).forEach(investor => void console.log(investor));
+        // console.log(`EXCHANGE: chain length: ${this.chain.lastBlock().index}, total BTC: ${this.totalBtc}`);
     }
 }
 

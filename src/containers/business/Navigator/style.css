@@ -1,0 +1,10 @@
+.navigator {
+    user-select: none;
+}
+.navigator>.odd-even-list {
+    margin-top: 10px;
+    display: block;
+    cursor: pointer;
+    height: 2rem;
+    line-height: 2rem;
+}

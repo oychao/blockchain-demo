@@ -117,8 +117,8 @@ class Miner extends Participant {
      * @param {Block} block 
      */
     printBlock(block) {
-        console.log(`${this.id.toUpperCase()}:`);
-        console.log(block.toString());
+        // console.log(`${this.id.toUpperCase()}:`);
+        // console.log(block.toString());
         // console.log(block.miner, block.index);
     }
 }

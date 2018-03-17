@@ -5,10 +5,17 @@ const reducer = (state = {
     miners: [],
     investors: [],
     transactions: {},
-    blocks: []
+    blocks: [],
+    activeBlock: undefined,
 }, action) => {
-    const { type, payload } = action;
-    let { miners, investors, transactions, blocks } = state;
+    const { type, payload, } = action;
+    let {
+        miners,
+        investors,
+        transactions,
+        blocks,
+        activeBlock,
+    } = state;
     let totalBtc = 0;
     let newMinerFlag = undefined;
     let newInvestorFlag = undefined;
@@ -16,6 +23,9 @@ const reducer = (state = {
         case actionTypes.BLOCK_ADD:
             blocks = blocks.slice();
             blocks.push(payload);
+            break;
+        case actionTypes.BLOCK_ACTIVATE:
+            activeBlock = payload;
             break;
         case actionTypes.MINER_ADD:
             miners = miners.slice();
@@ -52,8 +62,14 @@ const reducer = (state = {
     }
     totalBtc = investors.reduce((acc, investor) => acc + investor.balance, totalBtc);
     return {
-        miners, investors, totalBtc, transactions, blocks,
-        newMinerFlag, newInvestorFlag
+        miners,
+        investors,
+        totalBtc,
+        transactions,
+        blocks,
+        activeBlock,
+        newMinerFlag,
+        newInvestorFlag,
     };
 };
 

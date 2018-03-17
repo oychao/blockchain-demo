@@ -1,9 +1,72 @@
 #app {
     overflow: hidden;
-    height: 100%;
-    background-color: blueviolet;
+    height: 100vh;
+    background-color: oldlace;
     color: aliceblue;
+    display: grid;
+    grid-template-rows: 70px repeat(2, minmax(100px, 1fr));
+    grid-template-columns: 150px repeat(3, minmax(100px, 1fr)) minmax(100px, 2fr);
+    grid-template-areas: "header header        header           header           header"
+                         "nav    miner-list    miner-details    blockchain-info  block-details"
+                         "nav    investor-list investor-details transaction-list block-details";
+    grid-gap: 6px;
 }
-#app button {
-    font-size: 1.1em;
+#app>header {
+    grid-area: header;
+    background-color: purple;
+}
+#app>nav {
+    cursor: default;
+    grid-area: nav;
+    background-color: grey;
+}
+#app>div {
+    background-color: grey;
+}
+#app>div>div {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    overflow-wrap: break-word;
+    word-break: break-all;
+}
+#app>div>div>h3 {
+    text-align: center;
+}
+#app>.minerlist {
+    grid-area: miner-list;
+}
+#app>.miner-details {
+    grid-area: miner-details;
+}
+#app>.investor-list {
+    grid-area: investor-list;
+}
+#app>.investor-details {
+    grid-area: investor-details;
+}
+#app>.transaction-list {
+    grid-area: transaction-list;
+}
+#app>.blockchain-info {
+    grid-area: blockchain-info;
+}
+#app>.block-details {
+    grid-area: block-details;
+}
+
+ul.odd-even-list {
+    padding-left: 15px;
+}
+ul.odd-even-list>li {
+    cursor: pointer;
+}
+ul.odd-even-list>li:nth-child(2n - 1){
+    color: bisque;
+}
+ul.odd-even-list>li:nth-child(2n){
+    color: lightsteelblue;
+}
+ul.odd-even-list>li:hover, ul.odd-even-list>li.active {
+    color: rebeccapurple;
 }

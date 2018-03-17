@@ -4,30 +4,32 @@ import './style.css';
 
 import ListPanel from 'containers/utils/ListPanel';
 
-class Block extends React.PureComponent {
+class Blockchain extends React.PureComponent {
     constructor(props) {
         super(props);
-        this.state = {
-            show: false
-        };
-        this.toggleDetails = :: this.toggleDetails;
     }
 
-    toggleDetails() {
-        this.setState({
-            show: !this.state.show,
-        });
+    shouldComponentUpdate(nextProps, nextState) {
+        const { blocks, activeBlock } = this.props;
+        return blocks.length !== nextProps.blocks.length || activeBlock !== nextProps.activateBlock;
     }
 
     render() {
-        const { blocks } = this.props;
+        const {
+            blocks,
+            activeBlock,
+            activateBlock,
+        } = this.props;
         return (
             <div className="block">
                 <h3>Blockchain</h3>
                 <ListPanel.view>
                     <ul className="odd-even-list">
                         {blocks.map(({ index, miner, nonce, hash, prevHash, transacs }) =>
-                            <li key={hash}>{index} - {hash.slice(0, 30)}</li>
+                            <li key={hash} className={hash === activeBlock ? 'active' : ''}
+                                onClick={() => void (activateBlock(hash))}>
+                                {index} - {hash.slice(0, 30)}
+                            </li>
                         )}
                     </ul>
                 </ListPanel.view>
@@ -36,4 +38,4 @@ class Block extends React.PureComponent {
     }
 }
 
-export default Block;
+export default Blockchain;

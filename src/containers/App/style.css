@@ -5,7 +5,7 @@
     color: aliceblue;
     display: grid;
     grid-template-rows: 70px repeat(2, minmax(100px, 1fr));
-    grid-template-columns: 150px repeat(4, minmax(100px, 1fr));
+    grid-template-columns: 150px repeat(3, minmax(100px, 1fr)) minmax(100px, 2fr);
     grid-template-areas: "header header        header           header           header"
                          "nav    miner-list    miner-details    blockchain-info  block-details"
                          "nav    investor-list investor-details transaction-list block-details";

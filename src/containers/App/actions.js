@@ -2,12 +2,19 @@ import * as actionTypes from './actionTypes';
 
 export const addBlock = block => ({
     type: actionTypes.BLOCK_ADD,
-    payload: block
+    payload: block,
+});
+
+export const activeBlock = hash => ({
+    type: actionTypes.BLOCK_ACTIVATE,
+    payload: hash,
 });
 
 export const addMiner = miner => ({
     type: actionTypes.MINER_ADD,
-    payload: { id: miner }
+    payload: {
+        id: miner,
+    },
 });
 
 export const newMinerFlag = () => ({
@@ -16,29 +23,29 @@ export const newMinerFlag = () => ({
 
 export const addInvestor = investor => ({
     type: actionTypes.INVESTOR_ADD,
-    payload: investor
+    payload: investor,
 });
 
 export const newInvestorFlag = () => ({
-    type: actionTypes.INVESTOR_NEW_FLAG
+    type: actionTypes.INVESTOR_NEW_FLAG,
 });
 
 export const resetInvestors = investors => ({
     type: actionTypes.INVESTORS_RESET,
-    payload: investors
+    payload: investors,
 });
 
 export const addTransaction = transaction => ({
     type: actionTypes.TRANSACTION_ADD,
-    payload: transaction
+    payload: transaction,
 });
 
 export const delTransaction = hash => ({
     type: actionTypes.TRANSACTION_DEL,
-    payload: hash
+    payload: hash,
 });
 
 export const delTransactionBatch = hashes => ({
     type: actionTypes.TRANSACTION_DEL_BATCH,
-    payload: hashes
+    payload: hashes,
 });

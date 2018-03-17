@@ -1,4 +1,5 @@
 export const BLOCK_ADD = 'block/add';
+export const BLOCK_ACTIVATE = 'block/activate';
 export const MINER_ADD = 'miner/add';
 export const MINER_NEW_FLAG = 'miner/new/flag';
 export const INVESTOR_ADD = 'investor/add';

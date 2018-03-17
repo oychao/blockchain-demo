@@ -18,26 +18,26 @@ import Transactions from 'containers/business/Transactions';
 class App extends React.Component {
     constructor(props) {
         super(props);
-        this.handleNewMiner = :: this.handleNewMiner;
-        this.handleNewInvestor = :: this.handleNewInvestor;
-    }
-
-    handleNewMiner() {
-        this.props.handleNewMiner();
-    }
-
-    handleNewInvestor() {
-        this.props.handleNewInvestor();
     }
 
     render() {
-        const { blocks, miners, investors, totalBtc, transactions } = this.props;
-        const handlers = [{
+        const {
+            blocks,
+            activeBlock,
+            miners,
+            investors,
+            totalBtc,
+            transactions,
+            handleNewMiner,
+            handleNewInvestor,
+            activateBlock,
+        } = this.props;
+        const options = [{
             name: 'Add Miner',
-            func: this.handleNewMiner
+            func: handleNewMiner
         }, {
             name: 'Add Investor',
-            func: this.handleNewInvestor
+            func: handleNewInvestor
         }];
         return (
             <div id="app">
@@ -45,7 +45,7 @@ class App extends React.Component {
                     <Dashboard.view {...this.props} />
                 </header>
                 <nav>
-                    <Navigator.view handlers={handlers} />
+                    <Navigator.view options={options} />
                 </nav>
                 <div className="miner-list">
                     <MinerList.view miners={miners} />
@@ -63,10 +63,10 @@ class App extends React.Component {
                     <Transactions.view transactions={transactions} />
                 </div>
                 <div className="blockchain-info">
-                    <Blockchain.view blocks={blocks} />
+                    <Blockchain.view blocks={blocks} activeBlock={activeBlock} activateBlock={activateBlock} />
                 </div>
                 <div className="block-details">
-                    <BlockDetails.view />
+                    <BlockDetails.view block={blocks.find(block => block.hash === activeBlock)} />
                 </div>
             </div >
         );
@@ -78,11 +78,13 @@ const mapStateToProps = state => ({
     miners: state.miners.slice(),
     investors: state.investors.slice(),
     totalBtc: state.totalBtc,
-    transactions: Object.assign({}, state.transactions)
+    transactions: Object.assign({}, state.transactions),
+    activeBlock: state.activeBlock,
 });
 const mapDispatchToProps = dispatch => ({
     handleNewMiner: () => dispatch(actions.newMinerFlag()),
-    handleNewInvestor: () => dispatch(actions.newInvestorFlag())
+    handleNewInvestor: () => dispatch(actions.newInvestorFlag()),
+    activateBlock: hash => dispatch(actions.activeBlock(hash)),
 });
 
 export default hot(module)(connect(mapStateToProps, mapDispatchToProps)(App));

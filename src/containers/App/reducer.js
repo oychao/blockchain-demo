@@ -61,6 +61,7 @@ const reducer = (state = {
         default: ;
     }
     totalBtc = investors.reduce((acc, investor) => acc + investor.balance, totalBtc);
+    totalBtc = totalBtc !== totalBtc ? '≈100' : totalBtc;
     return {
         miners,
         investors,

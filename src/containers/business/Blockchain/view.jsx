@@ -4,7 +4,7 @@ import './style.css';
 
 import ListPanel from 'containers/utils/ListPanel';
 
-class Blockchain extends React.PureComponent {
+class Blockchain extends React.Component {
     constructor(props) {
         super(props);
     }

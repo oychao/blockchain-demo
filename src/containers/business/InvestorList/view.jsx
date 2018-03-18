@@ -6,7 +6,11 @@ import ListPanel from 'containers/utils/ListPanel';
 
 const InvestorList = ({ investors }) => (
     <div className="investor-list">
-        <h3>Investor List</h3>
+        <h3>
+            Investor List
+            <br/>
+            <span>(5 independent one at most)</span>
+        </h3>
         <ListPanel.view>
             <ul className="odd-even-list">
                 {investors.map(({ id }) =>

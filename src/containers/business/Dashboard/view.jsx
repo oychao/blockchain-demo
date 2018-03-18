@@ -7,8 +7,8 @@ const Dashboard = ({ blocks, miners, investors, totalBtc, transactions }) => (
         <h1>A BlockChain Demo</h1>
         <ul>
             <li>block count: <strong>{blocks.length}</strong></li>
-            <li>miner count(5 at most): <strong>{miners.length}</strong></li>
-            <li>investors count(10 at most): <strong>{investors.length}</strong></li>
+            <li>miner count: <strong>{miners.length}</strong></li>
+            <li>investors count: <strong>{investors.length}</strong></li>
             <li>total BTC: <strong>{totalBtc}</strong></li>
             <li>transactions count in exchange: <strong>{Object.keys(transactions).length}</strong></li>
         </ul>

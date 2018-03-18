@@ -6,7 +6,11 @@ import ListPanel from 'containers/utils/ListPanel';
 
 const MinerList = ({ miners }) => (
     <div className="miner-list">
-        <h3>Miner List</h3>
+        <h3>
+            Miner List
+            <br/>
+            <span>(5 at most)</span>
+        </h3>
         <ListPanel.view>
             <ul className="odd-even-list">
                 {miners.map(({ id }) =>

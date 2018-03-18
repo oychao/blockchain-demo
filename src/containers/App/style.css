@@ -29,9 +29,16 @@
     overflow: hidden;
     overflow-wrap: break-word;
     word-break: break-all;
+    display: flex;
+    flex-direction: column;
 }
 #app>div>div>h3 {
     text-align: center;
+    flex: 0 1 0px;
+}
+#app>div>div>h3>span {
+  font-size: .9rem;
+  font-weight: normal;
 }
 #app>.minerlist {
     grid-area: miner-list;

@@ -8,8 +8,7 @@ const MinerList = ({ miners, activeMiner, activateMiner, }) => (
     <div className="miner-list">
         <h3>
             Miner List
-            <br />
-            <span>(5 at most)</span>
+            <span> (5 at most)</span>
         </h3>
         <ListPanel.view>
             <ul className="odd-even-list">

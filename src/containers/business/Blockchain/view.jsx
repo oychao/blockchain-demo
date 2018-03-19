@@ -28,7 +28,7 @@ class Blockchain extends React.Component {
                         {blocks.map(({ index, miner, nonce, hash, prevHash, transacs }) =>
                             <li key={hash} className={hash === activeBlock ? 'active' : ''}
                                 onClick={() => void (activateBlock(hash))}>
-                                {index} - {hash.slice(0, 30)}
+                                {index} - {hash.slice(0, 27)}
                             </li>
                         )}
                     </ul>

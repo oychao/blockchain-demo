@@ -40,25 +40,25 @@
   font-size: .9rem;
   font-weight: normal;
 }
-#app>.minerlist {
+#app>.miner-list-area {
     grid-area: miner-list;
 }
-#app>.miner-details {
+#app>.miner-details-area {
     grid-area: miner-details;
 }
-#app>.investor-list {
+#app>.investor-list-area {
     grid-area: investor-list;
 }
-#app>.investor-details {
+#app>.investor-details-area {
     grid-area: investor-details;
 }
-#app>.transaction-list {
+#app>.transaction-list-area {
     grid-area: transaction-list;
 }
-#app>.blockchain-info {
+#app>.blockchain-info-area {
     grid-area: blockchain-info;
 }
-#app>.block-details {
+#app>.block-details-area {
     grid-area: block-details;
 }
 

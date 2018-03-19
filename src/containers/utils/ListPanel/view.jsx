@@ -8,7 +8,7 @@ class ListPanel extends React.PureComponent {
     }
 
     render() {
-        const { children } = this.props;
+        const { children, } = this.props;
         return (
             <div ref={_ => void (this.container = _)} className="list-panel">
                 {children}

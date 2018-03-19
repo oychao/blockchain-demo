@@ -4,7 +4,7 @@ import './style.css';
 
 import ListPanel from 'containers/utils/ListPanel';
 
-const InvestorList = ({ investors }) => (
+const InvestorList = ({ investors, }) => (
     <div className="investor-list">
         <h3>
             Investor List

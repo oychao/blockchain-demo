@@ -10,7 +10,7 @@ class Blockchain extends React.Component {
     }
 
     shouldComponentUpdate(nextProps, nextState) {
-        const { blocks, activeBlock } = this.props;
+        const { blocks, activeBlock, } = this.props;
         return blocks.length !== nextProps.blocks.length || activeBlock !== nextProps.activateBlock;
     }
 

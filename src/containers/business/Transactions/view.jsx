@@ -10,7 +10,7 @@ class Transactions extends React.PureComponent {
     }
 
     render() {
-        const { transactions } = this.props;
+        const { transactions, } = this.props;
         return (
             <div className="transactions">
                 <h3>Transactions in Exchange</h3>

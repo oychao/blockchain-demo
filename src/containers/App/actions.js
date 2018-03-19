@@ -18,7 +18,12 @@ export const addMiner = miner => ({
 });
 
 export const newMinerFlag = () => ({
-    type: actionTypes.MINER_NEW_FLAG
+    type: actionTypes.MINER_NEW_FLAG,
+});
+
+export const activateMiner = id => ({
+    type: actionTypes.MINER_ACTIVATE,
+    payload: id,
 });
 
 export const addInvestor = investor => ({
@@ -28,6 +33,11 @@ export const addInvestor = investor => ({
 
 export const newInvestorFlag = () => ({
     type: actionTypes.INVESTOR_NEW_FLAG,
+});
+
+export const activateInvestor = id => ({
+    type: actionTypes.INVESTOR_ACTIVATE,
+    payload: id,
 });
 
 export const resetInvestors = investors => ({

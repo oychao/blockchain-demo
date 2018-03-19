@@ -2,7 +2,7 @@ import React from 'react';
 
 import './style.css';
 
-const Navigator = ({ options }) => (
+const Navigator = ({ options, }) => (
     <div className="navigator">
         <ul className="odd-even-list">
             {options.map(handler => (

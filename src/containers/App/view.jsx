@@ -23,14 +23,18 @@ class App extends React.Component {
     render() {
         const {
             blocks,
-            activeBlock,
             miners,
             investors,
             totalBtc,
             transactions,
             handleNewMiner,
             handleNewInvestor,
+            activeBlock,
+            activeMiner,
+            activeInvestor,
             activateBlock,
+            activateMiner,
+            activateInvestor,
         } = this.props;
         const options = [{
             name: 'Add Miner',
@@ -47,26 +51,39 @@ class App extends React.Component {
                 <nav>
                     <Navigator.view options={options} />
                 </nav>
-                <div className="miner-list">
-                    <MinerList.view miners={miners} />
+                <div className="miner-list-area">
+                    <MinerList.view
+                        miners={miners}
+                        activeMiner={activeMiner}
+                        activateMiner={activateMiner} />
                 </div>
-                <div className="miner-details">
-                    <MinerDetails.view />
+                <div className="miner-details-area">
+                    <MinerDetails.view
+                        miner={miners.find(miner => miner.id === activeMiner)}
+                        blocks={blocks.filter(block => block.miner === activeMiner)}
+                        activeBlock={activeBlock}
+                        activateBlock={activateBlock} />
                 </div>
-                <div className="investor-list">
-                    <InvestorList.view investors={investors} />
+                <div className="investor-list-area">
+                    <InvestorList.view
+                        investors={investors}
+                        activeInvestor={activeInvestor} />
                 </div>
-                <div className="investor-details">
+                <div className="investor-details-area">
                     <InvestorDetails.view />
                 </div>
-                <div className="transaction-list">
+                <div className="transaction-list-area">
                     <Transactions.view transactions={transactions} />
                 </div>
-                <div className="blockchain-info">
-                    <Blockchain.view blocks={blocks} activeBlock={activeBlock} activateBlock={activateBlock} />
+                <div className="blockchain-info-area">
+                    <Blockchain.view
+                        blocks={blocks}
+                        activeBlock={activeBlock}
+                        activateBlock={activateBlock} />
                 </div>
-                <div className="block-details">
-                    <BlockDetails.view block={blocks.find(block => block.hash === activeBlock)} />
+                <div className="block-details-area">
+                    <BlockDetails.view
+                        block={blocks.find(block => block.hash === activeBlock)} />
                 </div>
             </div >
         );
@@ -80,11 +97,15 @@ const mapStateToProps = state => ({
     totalBtc: state.totalBtc,
     transactions: Object.assign({}, state.transactions),
     activeBlock: state.activeBlock,
+    activeMiner: state.activeMiner,
+    activeInvestor: state.activeInvestor,
 });
 const mapDispatchToProps = dispatch => ({
     handleNewMiner: () => dispatch(actions.newMinerFlag()),
     handleNewInvestor: () => dispatch(actions.newInvestorFlag()),
     activateBlock: hash => dispatch(actions.activeBlock(hash)),
+    activateMiner: id => dispatch(actions.activateMiner(id)),
+    activateInvestor: id => dispatch(actions.activateInvestor(id)),
 });
 
 export default hot(module)(connect(mapStateToProps, mapDispatchToProps)(App));

@@ -4,7 +4,7 @@ import './style.css';
 
 import ListPanel from 'containers/utils/ListPanel';
 
-const InvestorList = ({ investors, }) => (
+const InvestorList = ({ investors, activeInvestor, activateInvestor, }) => (
     <div className="investor-list">
         <h3>
             Investor List
@@ -13,7 +13,8 @@ const InvestorList = ({ investors, }) => (
         <ListPanel.view>
             <ul className="odd-even-list">
                 {investors.map(({ id }) =>
-                    <li key={id}>
+                    <li key={id} className={id === activeInvestor ? 'active' : ''}
+                        onClick={() => void (activateInvestor(id))}>
                         {id}
                     </li>
                 )}

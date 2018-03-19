@@ -75,5 +75,9 @@ ul.odd-even-list>li:nth-child(2n){
     color: lightsteelblue;
 }
 ul.odd-even-list>li:hover, ul.odd-even-list>li.active {
-    color: rebeccapurple;
+    color: yellowgreen;
+}
+
+span.gold {
+    color: gold;    
 }

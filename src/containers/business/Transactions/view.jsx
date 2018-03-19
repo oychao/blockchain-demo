@@ -16,7 +16,7 @@ class Transactions extends React.PureComponent {
                 <h3>Transactions in Exchange</h3>
                 <ListPanel.view>
                     <ul className="odd-even-list">
-                        {Object.values(transactions).map(({ hash, from, to, value }) => (
+                        {Object.values(transactions).map(({ hash, from, to, value, }) => (
                             <li key={hash}>
                                 {from} -> {to}: {value}
                             </li>

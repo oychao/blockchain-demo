@@ -67,10 +67,17 @@ class App extends React.Component {
                 <div className="investor-list-area">
                     <InvestorList.view
                         investors={investors}
-                        activeInvestor={activeInvestor} />
+                        activeInvestor={activeInvestor}
+                        activateInvestor={activateInvestor} />
                 </div>
                 <div className="investor-details-area">
-                    <InvestorDetails.view />
+                    <InvestorDetails.view
+                        investor={investors.find(investor => investor.id === activeInvestor)}
+                        blocks={blocks.filter(block => {
+                            return block.transacs.find(transac => transac.from === activeInvestor || transac.to === activeInvestor) !== undefined;
+                        })}
+                        activeBlock={activeBlock}
+                        activateBlock={activateBlock} />
                 </div>
                 <div className="transaction-list-area">
                     <Transactions.view transactions={transactions} />

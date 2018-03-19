@@ -9,7 +9,7 @@ class MinerDetails extends React.Component {
         super(props);
     }
 
-    shouldComponentUpdate({ miner, activeBlock, blocks }, nextState) {
+    shouldComponentUpdate({ miner, activeBlock, blocks, }, nextState) {
         return !this.props.miner ||
             this.props.miner.id !== miner.id ||
             this.props.activeBlock !== activeBlock ||
@@ -22,7 +22,7 @@ class MinerDetails extends React.Component {
         const children = miner ? (
             <>
                 <ul className="odd-even-list">
-                    {blocks.map(({ index, miner, nonce, hash, prevHash, transacs }) =>
+                    {blocks.map(({ index, miner, nonce, hash, prevHash, transacs, }) =>
                         <li key={hash} className={hash === activeBlock ? 'active' : ''}
                             onClick={() => void (activateBlock(hash))}>
                             {index} - {hash.slice(0, 27)}

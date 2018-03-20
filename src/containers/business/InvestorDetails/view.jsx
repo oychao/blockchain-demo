@@ -3,6 +3,7 @@ import React from 'react';
 import './style.css';
 
 import ListPanel from 'containers/utils/ListPanel';
+import BlockList from 'containers/business/BlockList';
 
 class InvestorDetails extends React.Component {
     constructor(props) {
@@ -26,14 +27,7 @@ class InvestorDetails extends React.Component {
         }, 0) : 0;
         const children = investor ? (
             <>
-                <ul className="odd-even-list">
-                    {blocks.map(({ index, miner, nonce, hash, prevHash, transacs, }) =>
-                        <li key={hash} className={hash === activeBlock ? 'active' : ''}
-                            onClick={() => void (activateBlock(hash))}>
-                            {index} - {hash.slice(0, 27)}
-                        </li>
-                    )}
-                </ul>
+                <BlockList.view {...{ blocks, activeBlock, activateBlock, }} />
                 <hr />
                 Investor Id: <span>{investor.id}</span>
                 <br />

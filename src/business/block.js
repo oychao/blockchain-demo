@@ -6,10 +6,12 @@ class Block {
         hash: '0000000000000000000'
     }) {
         this.miner = minerId;
-        this.transacs = transacs;
         this.nonce = 0;
         this.prevHash = prevBlock.hash;
         this.index = prevBlock.index + 1;
+        this.timestamp = new Date().getTime();
+        this.hash = '0';
+        this.transacs = transacs;
         this.calcHash();
     }
 

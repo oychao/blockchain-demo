@@ -9,9 +9,9 @@ class Blockchain extends React.Component {
         super(props);
     }
 
-    shouldComponentUpdate(nextProps, nextState) {
-        const { blocks, activeBlock } = this.props;
-        return blocks.length !== nextProps.blocks.length || activeBlock !== nextProps.activateBlock;
+    shouldComponentUpdate({ blocks, activeBlock, }, nextState) {
+        return this.props.blocks.length !== blocks.length ||
+            this.props.activeBlock !== activeBlock;
     }
 
     render() {
@@ -25,10 +25,10 @@ class Blockchain extends React.Component {
                 <h3>Blockchain</h3>
                 <ListPanel.view>
                     <ul className="odd-even-list">
-                        {blocks.map(({ index, miner, nonce, hash, prevHash, transacs }) =>
+                        {blocks.map(({ index, miner, nonce, hash, prevHash, transacs, }) =>
                             <li key={hash} className={hash === activeBlock ? 'active' : ''}
                                 onClick={() => void (activateBlock(hash))}>
-                                {index} - {hash.slice(0, 30)}
+                                {index} - {hash.slice(0, 27)}
                             </li>
                         )}
                     </ul>

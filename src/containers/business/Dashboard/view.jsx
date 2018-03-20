@@ -2,7 +2,7 @@ import React from 'react';
 
 import './style.css';
 
-const Dashboard = ({ blocks, miners, investors, totalBtc, transactions }) => (
+const Dashboard = ({ blocks, miners, investors, totalBtc, transactions, }) => (
     <div className="dashboard">
         <h1>A BlockChain Demo</h1>
         <ul>

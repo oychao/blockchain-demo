@@ -10,13 +10,13 @@ class Transactions extends React.PureComponent {
     }
 
     render() {
-        const { transactions } = this.props;
+        const { transactions, } = this.props;
         return (
             <div className="transactions">
                 <h3>Transactions in Exchange</h3>
                 <ListPanel.view>
                     <ul className="odd-even-list">
-                        {Object.values(transactions).map(({ hash, from, to, value }) => (
+                        {Object.values(transactions).map(({ hash, from, to, value, }) => (
                             <li key={hash}>
                                 {from} -> {to}: {value}
                             </li>

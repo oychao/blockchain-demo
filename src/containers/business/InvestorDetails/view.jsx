@@ -13,7 +13,8 @@ class InvestorDetails extends React.Component {
     shouldComponentUpdate({ investor, blocks, activeBlock, }, nextState) {
         return !this.props.investor ||
             this.props.blocks.length !== blocks.length ||
-            this.props.activeBlock !== activeBlock;
+            this.props.activeBlock !== activeBlock ||
+            this.props.investor.id !== investor.id;
     }
 
     render() {

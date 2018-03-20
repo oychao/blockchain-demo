@@ -46,6 +46,7 @@ const reducer = (state = {
                 draft.activeInvestor = payload;
                 break;
             case actionTypes.INVESTORS_RESET:
+                draft.investors = payload;
                 break;
             case actionTypes.TRANSACTION_ADD:
                 draft.transactions[payload.hash] = payload;

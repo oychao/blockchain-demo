@@ -110,9 +110,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
     handleNewMiner: () => dispatch(actions.newMinerFlag()),
     handleNewInvestor: () => dispatch(actions.newInvestorFlag()),
-    activateBlock: hash => dispatch(actions.activeBlock(hash)),
-    activateMiner: id => dispatch(actions.activateMiner(id)),
-    activateInvestor: id => dispatch(actions.activateInvestor(id)),
+    activateBlock: hash => hash |> actions.activeBlock |> dispatch,
+    activateMiner: id => id |> actions.activateMiner |> dispatch,
+    activateInvestor: id => id |> actions.activateInvestor |> dispatch,
 });
 
 export default hot(module)(connect(mapStateToProps, mapDispatchToProps)(App));

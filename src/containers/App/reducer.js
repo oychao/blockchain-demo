@@ -1,3 +1,5 @@
+import produce from 'immer';
+
 import Chain from 'business/chain';
 import * as actionTypes from './actionTypes';
 
@@ -6,84 +8,60 @@ const reducer = (state = {
     investors: [],
     transactions: {},
     blocks: [],
+    totalBtc: 0,
+    newMinerFlag: undefined,
+    newInvestorFlag: undefined,
     activeBlock: undefined,
     activeMiner: undefined,
     activeInvestor: undefined,
 }, action) => {
     const { type, payload, } = action;
-    let {
-        miners,
-        investors,
-        transactions,
-        blocks,
-        activeBlock,
-        activeMiner,
-        activeInvestor,
-    } = state;
-    let totalBtc = 0;
-    let newMinerFlag = undefined;
-    let newInvestorFlag = undefined;
-    switch (type) {
-        case actionTypes.BLOCK_ADD:
-            blocks = blocks.slice();
-            blocks.push(payload);
-            break;
-        case actionTypes.BLOCK_ACTIVATE:
-            activeBlock = payload;
-            break;
-        case actionTypes.MINER_ADD:
-            miners = miners.slice();
-            newMinerFlag = undefined;
-            miners.push(payload);
-            break;
-        case actionTypes.MINER_NEW_FLAG:
-            newMinerFlag = true;
-            break;
-        case actionTypes.MINER_ACTIVATE:
-            activeMiner = payload;
-            break;
-        case actionTypes.INVESTOR_ADD:
-            investors = investors.slice();
-            newInvestorFlag = undefined;
-            investors.push(payload);
-            break;
-        case actionTypes.INVESTOR_NEW_FLAG:
-            newInvestorFlag = true;
-            break;
-        case actionTypes.INVESTOR_ACTIVATE:
-            activeInvestor = payload;
-            break;
-        case actionTypes.INVESTORS_RESET:
-            investors = payload.slice();
-            break;
-        case actionTypes.TRANSACTION_ADD:
-            transactions = Object.assign({}, transactions);
-            transactions[payload.hash] = payload;
-            break;
-        case actionTypes.TRANSACTION_DEL:
-            transactions = Object.assign({}, transactions);
-            delete transactions[payload];
-            break;
-        case actionTypes.TRANSACTION_DEL_BATCH:
-            transactions = Object.assign({}, transactions);
-            payload.forEach(hash => delete transactions[hash]);
-            break;
-        default: ;
-    }
-    totalBtc = investors.reduce((acc, investor) => acc + investor.balance, totalBtc);
-    totalBtc = totalBtc !== totalBtc ? '≈100' : totalBtc;
-    return {
-        miners,
-        investors,
-        totalBtc,
-        transactions,
-        blocks,
-        activeBlock,
-        activeMiner,
-        activeInvestor,
-        newMinerFlag,
-        newInvestorFlag,
-    };
+    const next = produce(state, draft => {
+        draft.totalBtc = 0;
+        switch (type) {
+            case actionTypes.BLOCK_ADD:
+                draft.blocks.push(payload);
+                break;
+            case actionTypes.BLOCK_ACTIVATE:
+                draft.activeBlock = payload;
+                break;
+            case actionTypes.MINER_ADD:
+                draft.newMinerFlag = undefined;
+                draft.miners.push(payload);
+                break;
+            case actionTypes.MINER_NEW_FLAG:
+                draft.newMinerFlag = true;
+                break;
+            case actionTypes.MINER_ACTIVATE:
+                draft.activeMiner = payload;
+                break;
+            case actionTypes.INVESTOR_ADD:
+                draft.newInvestorFlag = undefined;
+                draft.investors.push(payload);
+                break;
+            case actionTypes.INVESTOR_NEW_FLAG:
+                draft.newInvestorFlag = true;
+                break;
+            case actionTypes.INVESTOR_ACTIVATE:
+                draft.activeInvestor = payload;
+                break;
+            case actionTypes.INVESTORS_RESET:
+                break;
+            case actionTypes.TRANSACTION_ADD:
+                draft.transactions[payload.hash] = payload;
+                break;
+            case actionTypes.TRANSACTION_DEL:
+                delete draft.transactions[payload];
+                break;
+            case actionTypes.TRANSACTION_DEL_BATCH:
+                payload.forEach(hash => delete draft.transactions[hash]);
+                break;
+            default: ;
+        }
+        draft.totalBtc = draft.investors.reduce((acc, investor) => acc + investor.balance, draft.totalBtc);
+        draft.totalBtc = draft.totalBtc !== draft.totalBtc ? '≈100' : draft.totalBtc;
+    });
+    return next;
 };
 
 export default reducer;

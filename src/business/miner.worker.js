@@ -12,7 +12,13 @@ class Digger {
         this.transactions = {};
     }
 
-    init({ id, investorId, chain: { blocks } }) {
+    init({
+        id,
+        investorId,
+        chain: {
+            blocks,
+        },
+    }) {
         this.id = id;
         this.investorId = investorId;
         this.chain = Reflect.construct(Chain, [blocks]);
@@ -55,7 +61,7 @@ class Digger {
      * transaction rewriting, then query miner for new transactions
      * @param {Object} param0 
      */
-    receiveBlock({ block, transacs }) {
+    receiveBlock({ block, transacs, }) {
         try {
             this.stopMining();
             this.chain.accept(block);
@@ -71,7 +77,7 @@ class Digger {
      * and query miner for latest transactions
      * @param {Object} param0 
      */
-    receiveBlocks({ blocks, transacs }) {
+    receiveBlocks({ blocks, transacs, }) {
         this.chain.blocks = blocks;
         this.receiveTransactions(transacs);
     }

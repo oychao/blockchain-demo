@@ -21,7 +21,7 @@ class BlockDetails extends React.Component {
             <div className="block-details">
                 <h3>Block Details</h3>
                 <ListPanel.view>
-                    <div style={{ whiteSpace: 'pre' }}>
+                    <div style={{ whiteSpace: 'pre', }}>
                         {JSON.stringify(block, null, 2)}
                     </div>
                 </ListPanel.view>

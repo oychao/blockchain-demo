@@ -12,7 +12,7 @@ const InvestorList = ({ investors, activeInvestor, activateInvestor, }) => (
         </h3>
         <ListPanel.view>
             <ul className="odd-even-list">
-                {investors.map(({ id }) =>
+                {investors.map(({ id, }) =>
                     <li key={id} className={id === activeInvestor ? 'active' : ''}
                         onClick={() => void (activateInvestor(id))}>
                         {id}

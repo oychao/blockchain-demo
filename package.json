@@ -6,7 +6,8 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "fix": "eslint . --fix --ext .js,.jsx"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.42",

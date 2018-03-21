@@ -3,7 +3,7 @@ import crypter from 'utils/crypter';
 class Block {
     constructor(minerId, transacs = [], prevBlock = {
         index: -1,
-        hash: '0000000000000000000'
+        hash: '0000000000000000000',
     }) {
         this.miner = minerId;
         this.nonce = 0;

@@ -21,15 +21,7 @@ class MinerDetails extends React.Component {
         const { miner, blocks, activeBlock, activateBlock, } = this.props;
         const reward = !!blocks ? blocks.reduce((acc, block) => acc + block.transacs[0].value, 0) : 0;
         const children = miner ? (
-            <>
-                <BlockList.view {...{ blocks, activeBlock, activateBlock, }} />
-                <hr />
-                Miner Id: <span>{miner.id}</span>
-                <br />
-                Block Count: <span>{blocks.length}</span>
-                <br />
-                Total Reward: <span className="gold">{reward}</span>
-            </>
+            <>'               '<BlockList.view {...{ blocks, activeBlock, activateBlock, }} />'               '<hr />'                Miner Id:'<span>{miner.id}</span>'               '<br />'                Block Count:'<span>{blocks.length}</span>'               '<br />'                Total Reward:'<span className="gold">{reward}</span>'           '</>
         ) : null;
         return (
             <div className="miner-details">

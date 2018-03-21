@@ -5,38 +5,38 @@ import ScriptExtHtmlWebpackPlugin from 'script-ext-html-webpack-plugin';
 import CleanWebpackPlugin from 'clean-webpack-plugin';
 
 module.exports = {
-    entry: ['@babel/polyfill', 'react-hot-loader/patch', './index.jsx'],
+    entry: ['@babel/polyfill', 'react-hot-loader/patch', './index.jsx',],
     output: {
         publicPath: '/',
         path: path.resolve('dist'),
-        filename: 'bundle.js'
+        filename: 'bundle.js',
     },
     externals: {
         'react': 'React',
         'react-dom': 'ReactDOM',
         'redux': 'Redux',
-        'react-redux': 'ReactRedux'
+        'react-redux': 'ReactRedux',
     },
     resolve: {
         modules: [
             path.resolve('./src'),
-            path.resolve('./node_modules')
+            path.resolve('./node_modules'),
         ],
-        extensions: ['.js', '.json', '.jsx', '.css']
+        extensions: ['.js', '.json', '.jsx', '.css',],
     },
     module: {
         rules: [{
             test: /\.css$/,
-            use: ['style-loader', 'css-loader']
+            use: ['style-loader', 'css-loader',],
         }, {
             test: /\.(js|jsx)$/,
             exclude: /node_modules/,
-            use: ['babel-loader']
+            use: ['babel-loader',],
         }, {
             test: /\.(worker\.js)$/,
             exclude: /node_modules/,
-            use: ['worker-loader']
-        }]
+            use: ['worker-loader',],
+        },],
     },
     devtool: 'eval-source-map',
     devServer: {
@@ -46,14 +46,14 @@ module.exports = {
         // progress: true
     },
     plugins: [
-        new CleanWebpackPlugin(['dist']),
+        new CleanWebpackPlugin(['dist',]),
         new HtmlWebpackPlugin({
-            template: 'index.html'
+            template: 'index.html',
         }),
         new ScriptExtHtmlWebpackPlugin({
-            defaultAttribute: 'defer'
+            defaultAttribute: 'defer',
         }),
         new webpack.NamedModulesPlugin(),
-        new webpack.HotModuleReplacementPlugin()
-    ]
+        new webpack.HotModuleReplacementPlugin(),
+    ],
 };

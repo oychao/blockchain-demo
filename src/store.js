@@ -1,4 +1,4 @@
-import { createStore, compose } from 'redux';
+import { createStore, compose, } from 'redux';
 
 import Chain from 'business/chain';
 import App from 'containers/App';

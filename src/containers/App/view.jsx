@@ -1,6 +1,6 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import { hot } from 'react-hot-loader';
+import { connect, } from 'react-redux';
+import { hot, } from 'react-hot-loader';
 
 import actions from './actions';
 import './style.css';
@@ -50,11 +50,11 @@ class App extends React.Component {
                 <nav>
                     <Navigator.view options={[{
                         name: 'Add Miner',
-                        func: handleNewMiner
+                        func: handleNewMiner,
                     }, {
                         name: 'Add Investor',
-                        func: handleNewInvestor
-                    }]} />
+                        func: handleNewInvestor,
+                    },]} />
                 </nav>
                 <div className="miner-list-area">
                     <MinerList.view {...{

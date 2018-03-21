@@ -19,7 +19,7 @@ class Miner extends Participant {
             },
         });
         this.pWorker.postMessage({
-            type: 'startMining'
+            type: 'startMining',
         });
 
         this.peers = [];
@@ -67,7 +67,7 @@ class Miner extends Participant {
     receive(block) {
         this.pWorker.postMessage({
             type: 'receiveBlock',
-            payload: { block, transacs: this.exchange.getTransactions(Chain.transSize) }
+            payload: { block, transacs: this.exchange.getTransactions(Chain.transSize), },
         }).catch(err => {
             this.queryPeer(block.miner);
             throw err;
@@ -89,7 +89,7 @@ class Miner extends Participant {
         peer.queryBlocks(this.id).then(blocks => {
             this.pWorker.postMessage({
                 type: 'receiveBlocks',
-                payload: { blocks, transacs: this.exchange.getTransactions(Chain.transSize) }
+                payload: { blocks, transacs: this.exchange.getTransactions(Chain.transSize), },
             });
         });
     }
@@ -102,8 +102,8 @@ class Miner extends Participant {
     queryBlocks(minerId) {
         return this.pWorker.postMessage({
             type: 'queryBlocks',
-            payload: minerId
-        })
+            payload: minerId,
+        });
     }
 
     /**
@@ -112,7 +112,7 @@ class Miner extends Participant {
     queryTransactions() {
         this.worker.postMessage({
             type: 'receiveTransactions',
-            payload: this.exchange.getTransactions(Chain.transSize)
+            payload: this.exchange.getTransactions(Chain.transSize),
         });
     }
 

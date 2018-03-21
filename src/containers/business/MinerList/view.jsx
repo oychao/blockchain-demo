@@ -12,7 +12,7 @@ const MinerList = ({ miners, activeMiner, activateMiner, }) => (
         </h3>
         <ListPanel.view>
             <ul className="odd-even-list">
-                {miners.map(({ id }) =>
+                {miners.map(({ id, }) =>
                     <li key={id} className={activeMiner === id ? 'active' : ''} onClick={() => void (activateMiner(id))}>{id}</li>
                 )}
             </ul>

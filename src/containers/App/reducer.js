@@ -1,14 +1,10 @@
-/**
- * not suitable for using handleActions of redux-actions,
- * for totalBtc need to be calculated every time.
- */
-// import { handleActions } from 'redux-actions';
+import { handleActions } from 'redux-actions';
 import produce from 'immer';
 
 import Chain from 'business/chain';
 import * as actionTypes from './actionTypes';
 
-const reducer = (state = {
+const defaultState = {
     miners: [],
     investors: [],
     transactions: {},
@@ -19,55 +15,61 @@ const reducer = (state = {
     activeBlock: undefined,
     activeMiner: undefined,
     activeInvestor: undefined,
-}, action) => {
-    const { type, payload, } = action;
-    const next = produce(state, draft => {
-        draft.totalBtc = 0;
-        switch (type) {
-            case actionTypes.BLOCK_ADD:
-                draft.blocks.push(payload.block);
-                break;
-            case actionTypes.BLOCK_ACTIVATE:
-                draft.activeBlock = payload.hash;
-                break;
-            case actionTypes.MINER_ADD:
-                draft.newMinerFlag = undefined;
-                draft.miners.push(payload.miner);
-                break;
-            case actionTypes.MINER_NEW_FLAG:
-                draft.newMinerFlag = true;
-                break;
-            case actionTypes.MINER_ACTIVATE:
-                draft.activeMiner = payload.id;
-                break;
-            case actionTypes.INVESTOR_ADD:
-                draft.newInvestorFlag = undefined;
-                draft.investors.push(payload.investor);
-                break;
-            case actionTypes.INVESTOR_NEW_FLAG:
-                draft.newInvestorFlag = true;
-                break;
-            case actionTypes.INVESTOR_ACTIVATE:
-                draft.activeInvestor = payload.id;
-                break;
-            case actionTypes.INVESTORS_RESET:
-                draft.investors = payload.investors;
-                break;
-            case actionTypes.TRANSACTION_ADD:
-                draft.transactions[payload.transaction.hash] = payload.transaction;
-                break;
-            case actionTypes.TRANSACTION_DEL:
-                delete draft.transactions[payload.hash];
-                break;
-            case actionTypes.TRANSACTION_DEL_BATCH:
-                payload.hashes.forEach(hash => delete draft.transactions[hash]);
-                break;
-            default: ;
-        }
-        draft.totalBtc = draft.investors.reduce((acc, investor) => acc + investor.balance, draft.totalBtc);
-        draft.totalBtc = draft.totalBtc !== draft.totalBtc ? '≈100' : draft.totalBtc;
-    });
-    return next;
 };
+const reducer = handleActions({
+    [actionTypes.BLOCK_ADD]: (state, { payload, }) => produce(state, draft => {
+        draft.blocks.push(payload.block);
+        draft.totalBtc = 0;
+        draft.totalBtc = draft.blocks.reduce((acc, block) => acc + block.transacs[0].value, draft.totalBtc);
+        draft.totalBtc = draft.totalBtc !== draft.totalBtc ? '≈100' : draft.totalBtc;
+        return draft;
+    }),
+    [actionTypes.BLOCK_ACTIVATE]: (state, { payload, }) => produce(state, draft => {
+        draft.activeBlock = payload.hash;
+        return draft;
+    }),
+    [actionTypes.MINER_ADD]: (state, { payload, }) => produce(state, draft => {
+        draft.newMinerFlag = undefined;
+        draft.miners.push(payload.miner);
+        return draft;
+    }),
+    [actionTypes.MINER_NEW_FLAG]: (state, { payload, }) => produce(state, draft => {
+        draft.newMinerFlag = true;
+        return draft;
+    }),
+    [actionTypes.MINER_ACTIVATE]: (state, { payload, }) => produce(state, draft => {
+        draft.activeMiner = payload.id;
+        return draft;
+    }),
+    [actionTypes.INVESTOR_ADD]: (state, { payload, }) => produce(state, draft => {
+        draft.newInvestorFlag = undefined;
+        draft.investors.push(payload.investor);
+        return draft;
+    }),
+    [actionTypes.INVESTOR_NEW_FLAG]: (state, { payload, }) => produce(state, draft => {
+        draft.newInvestorFlag = true;
+        return draft;
+    }),
+    [actionTypes.INVESTOR_ACTIVATE]: (state, { payload, }) => produce(state, draft => {
+        draft.activeInvestor = payload.id;
+        return draft;
+    }),
+    [actionTypes.INVESTOR_RESET]: (state, { payload, }) => produce(state, draft => {
+        draft.investors = payload.investors;
+        return draft;
+    }),
+    [actionTypes.TRANSACTION_ADD]: (state, { payload, }) => produce(state, draft => {
+        draft.transactions[payload.transaction.hash] = payload.transaction;
+        return draft;
+    }),
+    [actionTypes.TRANSACTION_DEL]: (state, { payload, }) => produce(state, draft => {
+        delete draft.transactions[payload.hash];
+        return draft;
+    }),
+    [actionTypes.TRANSACTION_DEL_BATCH]: (state, { payload, }) => produce(state, draft => {
+        payload.hashes.forEach(hash => delete draft.transactions[hash]);
+        return draft;
+    }),
+}, defaultState);
 
 export default reducer;

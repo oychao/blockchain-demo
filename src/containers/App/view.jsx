@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 
-import * as actions from './actions';
+import actions from './actions';
 import './style.css';
 
 import Dashboard from 'containers/business/Dashboard';
@@ -118,11 +118,11 @@ const mapStateToProps = state => ({
     activeInvestor: state.activeInvestor,
 });
 const mapDispatchToProps = dispatch => ({
-    handleNewMiner: () => dispatch(actions.newMinerFlag()),
-    handleNewInvestor: () => dispatch(actions.newInvestorFlag()),
-    activateBlock: hash => hash |> actions.activeBlock |> dispatch,
-    activateMiner: id => id |> actions.activateMiner |> dispatch,
-    activateInvestor: id => id |> actions.activateInvestor |> dispatch,
+    handleNewMiner: () => dispatch(actions.miner.new.flag()),
+    handleNewInvestor: () => dispatch(actions.investor.new.flag()),
+    activateBlock: hash => hash |> actions.block.activate |> dispatch,
+    activateMiner: id => id |> actions.miner.activate |> dispatch,
+    activateInvestor: id => id |> actions.investor.activate |> dispatch,
 });
 
 export default hot(module)(connect(mapStateToProps, mapDispatchToProps)(App));

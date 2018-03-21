@@ -1,3 +1,8 @@
+/**
+ * not suitable for using handleActions of redux-actions,
+ * for totalBtc need to be calculated every time.
+ */
+// import { handleActions } from 'redux-actions';
 import produce from 'immer';
 
 import Chain from 'business/chain';
@@ -20,42 +25,42 @@ const reducer = (state = {
         draft.totalBtc = 0;
         switch (type) {
             case actionTypes.BLOCK_ADD:
-                draft.blocks.push(payload);
+                draft.blocks.push(payload.block);
                 break;
             case actionTypes.BLOCK_ACTIVATE:
-                draft.activeBlock = payload;
+                draft.activeBlock = payload.hash;
                 break;
             case actionTypes.MINER_ADD:
                 draft.newMinerFlag = undefined;
-                draft.miners.push(payload);
+                draft.miners.push(payload.miner);
                 break;
             case actionTypes.MINER_NEW_FLAG:
                 draft.newMinerFlag = true;
                 break;
             case actionTypes.MINER_ACTIVATE:
-                draft.activeMiner = payload;
+                draft.activeMiner = payload.id;
                 break;
             case actionTypes.INVESTOR_ADD:
                 draft.newInvestorFlag = undefined;
-                draft.investors.push(payload);
+                draft.investors.push(payload.investor);
                 break;
             case actionTypes.INVESTOR_NEW_FLAG:
                 draft.newInvestorFlag = true;
                 break;
             case actionTypes.INVESTOR_ACTIVATE:
-                draft.activeInvestor = payload;
+                draft.activeInvestor = payload.id;
                 break;
             case actionTypes.INVESTORS_RESET:
-                draft.investors = payload;
+                draft.investors = payload.investors;
                 break;
             case actionTypes.TRANSACTION_ADD:
-                draft.transactions[payload.hash] = payload;
+                draft.transactions[payload.transaction.hash] = payload.transaction;
                 break;
             case actionTypes.TRANSACTION_DEL:
-                delete draft.transactions[payload];
+                delete draft.transactions[payload.hash];
                 break;
             case actionTypes.TRANSACTION_DEL_BATCH:
-                payload.forEach(hash => delete draft.transactions[hash]);
+                payload.hashes.forEach(hash => delete draft.transactions[hash]);
                 break;
             default: ;
         }

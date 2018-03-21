@@ -3,6 +3,7 @@ import React from 'react';
 import './style.css';
 
 import ListPanel from 'containers/utils/ListPanel';
+import BlockList from 'containers/business/BlockList';
 
 class MinerDetails extends React.Component {
     constructor(props) {
@@ -21,14 +22,7 @@ class MinerDetails extends React.Component {
         const reward = !!blocks ? blocks.reduce((acc, block) => acc + block.transacs[0].value, 0) : 0;
         const children = miner ? (
             <>
-                <ul className="odd-even-list">
-                    {blocks.map(({ index, miner, nonce, hash, prevHash, transacs, }) =>
-                        <li key={hash} className={hash === activeBlock ? 'active' : ''}
-                            onClick={() => void (activateBlock(hash))}>
-                            {index} - {hash.slice(0, 27)}
-                        </li>
-                    )}
-                </ul>
+                <BlockList.view {...{ blocks, activeBlock, activateBlock, }} />
                 <hr />
                 Miner Id: <span>{miner.id}</span>
                 <br />

@@ -11,4 +11,4 @@ const randomIdx = upperLimit => (Math.random() * (upperLimit |> Math.round)) |> 
  */
 const randomBtc = upperLimit => Math.floor(Math.random() * upperLimit / 2) + 1;
 
-export { randomIdx, randomBtc };
+export { randomIdx, randomBtc, };

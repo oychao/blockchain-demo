@@ -86,7 +86,10 @@ const contactor = new Contactor();
 contactor.registerExchange(exchange);
 
 store.subscribe(() => {
-    const { newMinerFlag, newInvestorFlag } = store.getState();
+    const {
+        newMinerFlag,
+        newInvestorFlag,
+    } = store.getState();
     if (newMinerFlag) {
         contactor.popupMiner();
     }

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { hot } from 'react-hot-loader';
 
-import * as actions from './actions';
+import actions from './actions';
 import './style.css';
 
 import Dashboard from 'containers/business/Dashboard';
@@ -36,57 +36,67 @@ class App extends React.Component {
             activateMiner,
             activateInvestor,
         } = this.props;
-        const options = [{
-            name: 'Add Miner',
-            func: handleNewMiner
-        }, {
-            name: 'Add Investor',
-            func: handleNewInvestor
-        }];
         return (
             <div id="app">
                 <header>
-                    <Dashboard.view {...this.props} />
+                    <Dashboard.view {...{
+                        blocks,
+                        miners,
+                        investors,
+                        totalBtc,
+                        transactions,
+                    }} />
                 </header>
                 <nav>
-                    <Navigator.view options={options} />
+                    <Navigator.view options={[{
+                        name: 'Add Miner',
+                        func: handleNewMiner
+                    }, {
+                        name: 'Add Investor',
+                        func: handleNewInvestor
+                    }]} />
                 </nav>
                 <div className="miner-list-area">
-                    <MinerList.view
-                        miners={miners}
-                        activeMiner={activeMiner}
-                        activateMiner={activateMiner} />
+                    <MinerList.view {...{
+                        miners,
+                        activeMiner,
+                        activateMiner,
+                    }} />
                 </div>
                 <div className="miner-details-area">
-                    <MinerDetails.view
-                        miner={miners.find(miner => miner.id === activeMiner)}
-                        blocks={blocks.filter(block => block.miner === activeMiner)}
-                        activeBlock={activeBlock}
-                        activateBlock={activateBlock} />
+                    <MinerDetails.view {...{
+                        activeBlock,
+                        activateBlock,
+                        miner: miners.find(miner => miner.id === activeMiner),
+                        blocks: blocks.filter(block => block.miner === activeMiner),
+                    }} />
                 </div>
                 <div className="investor-list-area">
-                    <InvestorList.view
-                        investors={investors}
-                        activeInvestor={activeInvestor}
-                        activateInvestor={activateInvestor} />
+                    <InvestorList.view {...{
+                        investors,
+                        activeInvestor,
+                        activateInvestor,
+                    }} />
                 </div>
                 <div className="investor-details-area">
-                    <InvestorDetails.view
-                        investor={investors.find(investor => investor.id === activeInvestor)}
-                        blocks={blocks.filter(block => {
+                    <InvestorDetails.view {...{
+                        activeBlock,
+                        activateBlock,
+                        investor: investors.find(investor => investor.id === activeInvestor),
+                        blocks: blocks.filter(block => {
                             return block.transacs.find(transac => transac.from === activeInvestor || transac.to === activeInvestor) !== undefined;
-                        })}
-                        activeBlock={activeBlock}
-                        activateBlock={activateBlock} />
+                        }),
+                    }} />
                 </div>
                 <div className="transaction-list-area">
                     <Transactions.view transactions={transactions} />
                 </div>
                 <div className="blockchain-info-area">
-                    <Blockchain.view
-                        blocks={blocks}
-                        activeBlock={activeBlock}
-                        activateBlock={activateBlock} />
+                    <Blockchain.view {...{
+                        blocks,
+                        activeBlock,
+                        activateBlock,
+                    }} />
                 </div>
                 <div className="block-details-area">
                     <BlockDetails.view
@@ -108,11 +118,11 @@ const mapStateToProps = state => ({
     activeInvestor: state.activeInvestor,
 });
 const mapDispatchToProps = dispatch => ({
-    handleNewMiner: () => dispatch(actions.newMinerFlag()),
-    handleNewInvestor: () => dispatch(actions.newInvestorFlag()),
-    activateBlock: hash => dispatch(actions.activeBlock(hash)),
-    activateMiner: id => dispatch(actions.activateMiner(id)),
-    activateInvestor: id => dispatch(actions.activateInvestor(id)),
+    handleNewMiner: () => dispatch(actions.miner.new.flag()),
+    handleNewInvestor: () => dispatch(actions.investor.new.flag()),
+    activateBlock: hash => hash |> actions.block.activate |> dispatch,
+    activateMiner: id => id |> actions.miner.activate |> dispatch,
+    activateInvestor: id => id |> actions.investor.activate |> dispatch,
 });
 
 export default hot(module)(connect(mapStateToProps, mapDispatchToProps)(App));

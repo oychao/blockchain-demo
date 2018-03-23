@@ -1,4 +1,4 @@
-import { createActions } from 'redux-actions';
+import { createActions, } from 'redux-actions';
 
 import * as actionTypes from './actionTypes';
 
@@ -8,7 +8,7 @@ const actions = createActions({
     [actionTypes.MINER_ADD]: id => ({ miner: { id, }, }),
     [actionTypes.MINER_NEW_FLAG]: () => ({}),
     [actionTypes.MINER_ACTIVATE]: id => ({ id, }),
-    [actionTypes.INVESTOR_ADD]: investor => ({ investor }),
+    [actionTypes.INVESTOR_ADD]: investor => ({ investor, }),
     [actionTypes.INVESTOR_NEW_FLAG]: () => ({}),
     [actionTypes.INVESTOR_ACTIVATE]: id => ({ id, }),
     [actionTypes.INVESTOR_RESET]: investors => ({ investors, }),

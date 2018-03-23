@@ -21,7 +21,7 @@ class Digger {
     }) {
         this.id = id;
         this.investorId = investorId;
-        this.chain = Reflect.construct(Chain, [blocks]);
+        this.chain = Reflect.construct(Chain, [blocks,]);
     }
 
     /**
@@ -98,7 +98,7 @@ class Digger {
         const ks = Object.keys(this.transactions);
         return [new Transaction(undefined, this.investorId,
             Chain.initReward * (.5 ** Math.floor((this.chain.lastBlock().index + 1) / Chain.binThreshold))
-        )].concat(ks.map(k => this.transactions[k]));
+        ),].concat(ks.map(k => this.transactions[k]));
     }
 
     /**
@@ -116,7 +116,7 @@ class Digger {
         this.stopMining();
         pWorker.postMessage({
             type: 'broadcast',
-            payload: block
+            payload: block,
         }).then(transacs => this.receiveTransactions(transacs));
     }
 }

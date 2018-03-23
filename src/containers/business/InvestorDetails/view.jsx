@@ -27,17 +27,7 @@ class InvestorDetails extends React.Component {
             return curCount + acc;
         }, 0) : 0;
         const children = investor ? (
-            <>
-                <BlockList.view {...{ blocks, activeBlock, activateBlock, }} />
-                <hr />
-                Investor Id: <span>{investor.id}</span>
-                <br />
-                Block Count: <span>{blocks.length}</span>
-                <br />
-                Transaction Count: <span>{transacCount}</span>
-                <br />
-                Balance in Chain: <span className="gold">{investor.balance}</span>
-            </>
+            <>'               '<BlockList.view {...{ blocks, activeBlock, activateBlock, }} />'               '<hr />'                Investor Id:'<span>{investor.id}</span>'               '<br />'                Block Count:'<span>{blocks.length}</span>'               '<br />'                Transaction Count:'<span>{transacCount}</span>'               '<br />'                Balance in Chain:'<span className="gold">{investor.balance}</span>'           '</>
         ) : null;
         return (
             <div className="investor-details">

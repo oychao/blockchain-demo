@@ -4,14 +4,20 @@ A blockchain demo in JavaScript.
 
 This project shows how a basic blockchain works.
 
-## Todo
+## Online Demo
 
-Working on it now.
+[Demo][1]
 
-- [x] Blockchain demo with Web Worker
-- [x] Basic interface
-- [ ] Redesign and implement the interface
+## Install
+
+```bash
+$ git clone https://github.com/oychao/blockchain-demo.git
+$ cd blockchain-demo
+$ yarn install & yarn start
+```
 
 ## Licence
 
 [![](http://www.wtfpl.net/wp-content/uploads/2012/12/wtfpl-badge-4.png)](http://www.wtfpl.net/)
+
+[1]: https://oychao.github.io/demos/blockchain/

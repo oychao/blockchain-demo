@@ -28,10 +28,6 @@ const config = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
-        use: ['awesome-typescript-loader']
-      },
-      {
         enforce: 'pre',
         test: /\.js$/,
         use: ['source-map-loader']
@@ -39,6 +35,15 @@ const config = {
       {
         test: /\.(css|less)$/,
         use: ['style-loader', 'css-loader', 'less-loader']
+      },
+      {
+        test: /\.(worker\.js)$/,
+        exclude: /node_modules/,
+        use: ['worker-loader']
+      },
+      {
+        test: /\.tsx?$/,
+        use: ['awesome-typescript-loader']
       }
     ]
   },
@@ -66,7 +71,7 @@ const config = {
 // development config
 if (process.env.NODE_ENV === 'development') {
   config.output.filename = 'js/[name].[hash:8].js';
-  config.plugins.push(new webpack.HotModuleReplacementPlugin());
+  // config.plugins.push(new webpack.HotModuleReplacementPlugin());
   config.optimization = {
     minimize: false
   };

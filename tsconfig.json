@@ -10,7 +10,9 @@
     "outDir": "./dist/",
     "paths": {
       "comps/*": ["src/components/*"],
-      "store/*": ["src/store/*"]
+      "store/*": ["src/store/*"],
+      "business/*": ["src/business/*"],
+      "utils/*": ["src/utils/*"]
     },
     "sourceMap": true,
     "target": "es6"

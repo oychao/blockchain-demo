@@ -7,7 +7,7 @@ import ListPanel from 'comps/utils/ListPanel';
 const MinerList = ({ miners, activeMiner, activateMiner }) => (
   <div className="miner-list">
     <h3>
-      Miner List
+      <span>Miner List</span>
       <span> (5 at most)</span>
     </h3>
     <ListPanel.view>

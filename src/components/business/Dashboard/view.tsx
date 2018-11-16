@@ -7,19 +7,19 @@ const Dashboard = ({ blocks, miners, investors, totalBtc, transactions }) => (
     <h1>A BlockChain Demo</h1>
     <ul>
       <li>
-        block count: <strong>{blocks.length}</strong>
+        <span>block count:&nbsp;</span><strong>{blocks.length}</strong>
       </li>
       <li>
-        miner count: <strong>{miners.length}</strong>
+        <span>miner count:&nbsp;</span><strong>{miners.length}</strong>
       </li>
       <li>
-        investors count: <strong>{investors.length}</strong>
+        <span>investors count:&nbsp;</span><strong>{investors.length}</strong>
       </li>
       <li>
-        total BTC: <strong>{totalBtc}</strong>
+        <span>total BTC:&nbsp;</span><strong>{totalBtc}</strong>
       </li>
       <li>
-        transactions count in exchange:{' '}
+        <span>transactions count in exchange:&nbsp;</span>
         <strong>{Object.keys(transactions).length}</strong>
       </li>
     </ul>

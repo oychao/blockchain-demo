@@ -7,7 +7,7 @@ import ListPanel from 'comps/utils/ListPanel';
 const InvestorList = ({ investors, activeInvestor, activateInvestor }) => (
   <div className="investor-list">
     <h3>
-      Investor List
+      <span>Investor List</span>
       <span> (5 independent one at most)</span>
     </h3>
     <ListPanel.view>

@@ -1,6 +1,6 @@
 # block-demo
 
-A blockchain demo in JavaScript.
+A blockchain demo in TypeScript.
 
 This project shows how a basic blockchain works.
 
